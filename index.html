@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Algebra Games</title>
+
+<style>
+body{
+    background:#bde0fe;
+    font-family:Arial;
+    text-align:center;
+}
+
+.container{
+    margin-top:100px;
+}
+
+.card{
+    display:inline-block;
+    width:220px;
+    height:220px;
+    margin:20px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    cursor:pointer;
+    padding-top:40px;
+}
+
+.card:hover{
+    transform:scale(1.1);
+}
+
+.title{
+    font-size:25px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎓 Algebra Games</h1>
+
+<div class="container">
+
+<div class="card" onclick="openPage('quiz.html')">
+🎯
+<div class="title">Quiz</div>
+</div>
+
+<div class="card" onclick="openPage('milionerzy.html')">
+💰
+<div class="title">Milionerzy</div>
+</div>
+
+<div class="card" onclick="openPage('kolo.html')">
+🎡
+<div class="title">Koło fortuny</div>
+</div>
+
+</div>
+
+<script>
+function openPage(page){
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>
