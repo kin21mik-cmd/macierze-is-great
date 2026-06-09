@@ -1,75 +1,8 @@
 <!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
-<title>Quiz Macierze</title>
-
-<style>
-body{
-    font-family:Arial;
-    background:#bde0fe;
-    text-align:center;
-}
-
-.question{
-    background:white;
-    margin:20px auto;
-    padding:20px;
-    width:500px;
-    border-radius:10px;
-}
-
-button{
-    display:block;
-    width:100%;
-    margin:10px 0;
-    padding:10px;
-}
-
-.correct{background:lightgreen;}
-.wrong{background:salmon;}
-</style>
-</head>
-
+<html>
 <body>
 
-<h1>Quiz Macierze</h1>
-
-<div class="question">
-<h3>det |1 2 3; 0 4 5; 1 0 6|</h3>
-<button onclick="check(this,false)">12</button>
-<button onclick="check(this,true)">22</button>
-<button onclick="check(this,false)">10</button>
-<button onclick="check(this,false)">24</button>
-</div>
-
-<div class="question">
-<h3>x + y = 2, 2x + y = 3 → x = ?</h3>
-<button onclick="check(this,true)">1</button>
-<button onclick="check(this,false)">2</button>
-<button onclick="check(this,false)">0</button>
-<button onclick="check(this,false)">-1</button>
-</div>
-
-<p id="score">Wynik: 0</p>
-
-<script>
-let score = 0;
-
-function check(btn, correct){
-    const buttons = btn.parentElement.querySelectorAll("button");
-    buttons.forEach(b => b.disabled = true);
-
-    if(correct){
-        btn.classList.add("correct");
-        score++;
-    }else{
-        btn.classList.add("wrong");
-    }
-
-    document.getElementById("score").innerText = "Wynik: " + score;
-}
-</script>
+<h1>TEST DZIAŁA ✅</h1>
 
 </body>
 </html>
