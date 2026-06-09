@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Milionerzy – Macierze</title>
+
+<style>
+body{
+    background:#000;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.box{
+    margin:50px auto;
+    width:600px;
+    background:#111;
+    padding:20px;
+    border-radius:15px;
+}
+
+h2{
+    color:#ffd700;
+}
+
+button{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:12px;
+    font-size:16px;
+    cursor:pointer;
+    background:#222;
+    color:white;
+    border:none;
+    border-radius:8px;
+}
+
+button:hover{
+    background:#444;
+}
+
+.correct{
+    background:green;
+}
+
+.wrong{
+    background:red;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💰 Milionerzy – Macierze</h1>
+
+<div class="box">
+    <h2 id="question"></h2>
+    <button id="a"></button>
+    <button id="b"></button>
+    <button id="c"></button>
+    <button id="d"></button>
+</div>
+
+<h3 id="score">Pytanie: 1</h3>
+
+<script>
+
+const questions = [
+
+{
+q:"Wyznacznik macierzy |1 2 3; 0 4 5; 1 0 6| wynosi:",
+answers:["22","10","15","12"],
+correct:0
+},
+
+{
+q:"Która metoda służy do obliczania wyznacznika 3x3?",
+answers:["Sarrusa","Pitagorasa","Gaussa-Jordana","Newtona"],
+correct:0
+},
+
+{
+q:"Wyznacznik macierzy |2 1 0; 3 -1 4; 1 2 1| wynosi:",
+answers:["3","5","1","7"],
+correct:0
+},
+
+{
+q:"Jeśli wyznacznik macierzy = 0 to macierz jest:",
+answers:["nieodwracalna","odwracalna","jednostkowa","symetryczna"],
+correct:0
+}
+
+];
+
+let current = 0;
+
+function loadQuestion(){
+    const q = questions[current];
+
+    document.getElementById("question").innerText = q.q;
+    document.getElementById("a").innerText = "A. " + q.answers[0];
+    document.getElementById("b").innerText = "B. " + q.answers[1];
+    document.getElementById("c").innerText = "C. " + q.answers[2];
+    document.getElementById("d").innerText = "D. " + q.answers[3];
+}
+
+function check(answer){
+    const correct = questions[current].correct;
+
+    const buttons = ["a","b","c","d"];
+
+    buttons.forEach((id,i)=>{
+        document.getElementById(id).disabled = true;
+
+        if(i === correct){
+            document.getElementById(id).classList.add("correct");
+        }
+    });
+
+    if(answer !== correct){
+        document.getElementById(buttons[answer]).classList.add("wrong");
+    }
+
+    setTimeout(()=>{
+        current++;
+
+        if(current < questions.length){
+            resetButtons();
+            loadQuestion();
+            document.getElementById("score").innerText = "Pytanie: " + (current+1);
+        } else {
+            document.body.innerHTML = "<h1>🎉 KONIEC GRY!</h1>";
+        }
+
+    },1500);
+}
+
+function resetButtons(){
+    const buttons = ["a","b","c","d"];
+    buttons.forEach(id => {
+        const btn = document.getElementById(id);
+        btn.disabled = false;
+        btn.classList.remove("correct","wrong");
+    });
+}
+
+document.getElementById("a").onclick = () => check(0);
+document.getElementById("b").onclick = () => check(1);
+document.getElementById("c").onclick = () => check(2);
+document.getElementById("d").onclick = () => check(3);
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
