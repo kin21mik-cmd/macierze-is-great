@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Quiz działa ✅</h1>
+
+<p>2x = 8, ile wynosi x?</p>
+
+<button onclick="check(2)">2</button>
+<button onclick="check(3)">3</button>
+<button onclick="check(4)">4</button>
+
+<p id="w"></p>
+
+<script>
+function check(x){
+  if(x==4){
+    document.getElementById("w").innerText="✅ dobrze";
+  }else{
+    document.getElementById("w").innerText="❌ źle";
+  }
+}
+</script>
+
+</body>
+</html>
