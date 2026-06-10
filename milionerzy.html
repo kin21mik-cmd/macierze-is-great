@@ -1,33 +1,183 @@
-<script>
-window.onload = function() {
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>💰 Milionerzy – Macierze</title>
 
-// ===== DŹWIĘKI (bez crasha) =====
-const correctSound = new Audio("correct.mp3");
-const wrongSound = new Audio("wrong.mp3");
-const winSound = new Audio("win.mp3");
-
-// ===== STAWKI =====
-const prizes = ["500 zł","2000 zł","5000 zł","10000 zł","20000 zł","40000 zł","75000 zł","125000 zł","500000 zł","1000000 zł"];
-
-function getGuaranteedMoney(i) {
-    if (i >= 6) return "40 000 zł";
-    if (i >= 1) return "2 000 zł";
-    return "0 zł";
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background: linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
+    text-align:center;
 }
 
-// ===== PYTANIA =====
+h1{
+    margin-top:20px;
+    color:#444;
+}
+
+#question{
+    font-size:22px;
+    margin:20px;
+    color:#333;
+    min-height:80px;
+}
+
+.container{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    width:60%;
+    margin:0 auto;
+}
+
+button{
+    padding:15px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    background:#ffd6e0;
+    transition:0.2s;
+}
+
+button:hover{
+    background:#ffb3c6;
+}
+
+#money{
+    margin-top:20px;
+    font-weight:bold;
+    color:#444;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💰 Milionerzy – Macierze (Gauss-Jordan)</h1>
+
+<div id="money">💵 0 zł</div>
+<div id="question">Ładowanie...</div>
+
+<div class="container">
+    <button id="a" onclick="check(0)"></button>
+    <button id="b" onclick="check(1)"></button>
+    <button id="c" onclick="check(2)"></button>
+    <button id="d" onclick="check(3)"></button>
+</div>
+
+<script>
+
+// ===== PYTANIA (TYLKO MACIERZE) =====
 const questions = [
-{q:"|2 3;1 4| =",answers:["5","8","2","7"],correct:0},
-{q:"Twórca macierzy?",answers:["Cayley","Newton","Gauss","Euler"],correct:0},
-{q:"|1 2;3 4| =",answers:["-2","2","10","4"],correct:0}
+{
+q: "Oblicz det: |1 2; 3 4|",
+a: ["-2","2","10","0"],
+c: 0,
+money: 1000
+},
+{
+q: "Co oznacza RREF?",
+a: [
+"zredukowana postać schodkowa",
+"losowa macierz",
+"transpozycja",
+"macierz diagonalna"
+],
+c: 0,
+money: 2000
+},
+{
+q: "Czy macierz jest odwracalna gdy det = 0?",
+a: ["tak","nie","zawsze","czasem"],
+c: 1,
+money: 5000
+},
+{
+q: "W metodzie Gaussa eliminujemy:",
+a: ["elementy poniżej przekątnej","losowe liczby","wiersze całkowicie","kolumny"],
+c: 0,
+money: 10000
+},
+{
+q: "Macierz jednostkowa 2x2 to:",
+a: ["1 0; 0 1","0 0; 0 0","1 1; 1 1","2 2; 2 2"],
+c: 0,
+money: 20000
+},
+{
+q: "Co daje Gauss-Jordan?",
+a: [
+"postać RREF",
+"determinant",
+"transpozycję",
+"wektor własny"
+],
+c: 0,
+money: 40000
+},
+{
+q: "Rozwiązanie układu równań przez macierze polega na:",
+a: [
+"operacjach elementarnych na wierszach",
+"mnożeniu losowym",
+"dzieleniu kolumn",
+"sumowaniu macierzy"
+],
+c: 0,
+money: 75000
+}
 ];
 
-let current=0;
+let i = 0;
+let cash = 0;
 
-function loadQuestion(){
-    let q=questions[current];
+// ===== DŹWIĘKI (opcjonalnie) =====
+const correct = new Audio("correct.mp3");
+const wrong = new Audio("wrong.mp3");
 
-    document.getElementById("question").innerText=q.q;
+// ===== ŁADOWANIE =====
+function load(){
+    let q = questions[i];
 
-    document.getElementById("a").innerText=q.answers[0];
+    document.getElementById("question").innerText = q.q;
 
+    document.getElementById("a").innerText = q.a[0];
+    document.getElementById("b").innerText = q.a[1];
+    document.getElementById("c").innerText = q.a[2];
+    document.getElementById("d").innerText = q.a[3];
+
+    document.getElementById("money").innerText = "💵 " + cash + " zł";
+}
+
+// ===== SPRAWDZANIE =====
+function check(ans){
+    let q = questions[i];
+
+    if(ans === q.c){
+        cash = q.money;
+        correct.play();
+
+        i++;
+
+        if(i < questions.length){
+            load();
+        } else {
+            document.getElementById("question").innerText =
+            "🎉 WYGRANA – pełna znajomość macierzy!";
+        }
+    } else {
+        wrong.play();
+        document.getElementById("question").innerText =
+        "❌ KONIEC GRY – spróbuj jeszcze raz";
+    }
+}
+
+load();
+
+</script>
+
+</body>
+</html>
