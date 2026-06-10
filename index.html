@@ -1,70 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Algebra Games</title>
 
 <style>
+
 body{
-    background:#bde0fe;
-    font-family:Arial;
+    margin:0;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#ffd6e7,#d6f0ff,#fff2c9);
     text-align:center;
 }
 
+/* Pływające symbole */
+
+.symbol{
+    position:absolute;
+    color:white;
+    font-size:40px;
+    opacity:0.5;
+    animation:float 15s linear infinite;
+    user-select:none;
+}
+
+@keyframes float{
+    from{
+        transform:translateY(110vh) rotate(0deg);
+    }
+    to{
+        transform:translateY(-120px) rotate(360deg);
+    }
+}
+
+h1{
+    margin-top:40px;
+    font-size:60px;
+    color:#444;
+    position:relative;
+    z-index:10;
+}
+
 .container{
-    margin-top:100px;
+    margin-top:80px;
+    position:relative;
+    z-index:10;
 }
 
 .card{
     display:inline-block;
-    width:220px;
-    height:220px;
-    margin:20px;
-    background:white;
-    border-radius:20px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    width:280px;
+    height:280px;
+    margin:25px;
+    border-radius:30px;
     cursor:pointer;
-    padding-top:40px;
+    transition:0.3s;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
 .card:hover{
-    transform:scale(1.1);
+    transform:scale(1.08);
+}
+
+.icon{
+    font-size:90px;
+    margin-top:45px;
 }
 
 .title{
-    font-size:25px;
-    margin-top:20px;
+    font-size:36px;
+    font-weight:bold;
+    margin-top:25px;
+    color:white;
 }
+
+.quiz{
+    background:#ff8dc7;
+}
+
+.million{
+    background:#7fb7ff;
+}
+
+.wheel{
+    background:#ffb066;
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- Pływające symbole -->
+
+<div class="symbol" style="left:5%; animation-duration:12s;">+</div>
+<div class="symbol" style="left:12%; animation-duration:18s;">−</div>
+<div class="symbol" style="left:20%; animation-duration:15s;">×</div>
+<div class="symbol" style="left:28%; animation-duration:17s;">÷</div>
+<div class="symbol" style="left:36%; animation-duration:14s;">∫</div>
+<div class="symbol" style="left:44%; animation-duration:20s;">∂</div>
+<div class="symbol" style="left:52%; animation-duration:13s;">Σ</div>
+<div class="symbol" style="left:60%; animation-duration:19s;">Δ</div>
+<div class="symbol" style="left:68%; animation-duration:16s;">λ</div>
+<div class="symbol" style="left:76%; animation-duration:14s;">A⁻¹</div>
+<div class="symbol" style="left:84%; animation-duration:18s;">det(A)</div>
+<div class="symbol" style="left:92%; animation-duration:15s;">f'(x)</div>
+
 <h1>🎓 Algebra Games</h1>
 
 <div class="container">
 
-<div class="card" onclick="openPage('quiz.html')">
-🎯
+<div class="card quiz" onclick="openPage('quiz.html')">
+<div class="icon">🎯</div>
 <div class="title">Quiz</div>
 </div>
 
-<div class="card" onclick="openPage('milionerzy.html')">
-💰
+<div class="card million" onclick="openPage('milionerzy.html')">
+<div class="icon">💰</div>
 <div class="title">Milionerzy</div>
 </div>
 
-<div class="card" onclick="openPage('kolo.html')">
-🎡
-<div class="title">Koło fortuny</div>
+<div class="card wheel" onclick="openPage('kolo.html')">
+<div class="icon">🎡</div>
+<div class="title">Koło Fortuny</div>
 </div>
 
 </div>
 
 <script>
+
 function openPage(page){
     window.location.href = page;
 }
+
 </script>
 
 </body>
