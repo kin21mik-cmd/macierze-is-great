@@ -1,11 +1,13 @@
 <script>
-// ===== DŹWIĘKI =====
+window.onload = function() {
+
+// ===== DŹWIĘKI (bez crasha) =====
 const correctSound = new Audio("correct.mp3");
 const wrongSound = new Audio("wrong.mp3");
 const winSound = new Audio("win.mp3");
 
 // ===== STAWKI =====
-const prizes = ["500 zł", "2 000 zł", "5 000 zł", "10 000 zł", "20 000 zł", "40 000 zł", "75 000 zł", "125 000 zł", "500 000 zł", "1 000 000 zł"];
+const prizes = ["500 zł","2000 zł","5000 zł","10000 zł","20000 zł","40000 zł","75000 zł","125000 zł","500000 zł","1000000 zł"];
 
 function getGuaranteedMoney(i) {
     if (i >= 6) return "40 000 zł";
@@ -15,194 +17,17 @@ function getGuaranteedMoney(i) {
 
 // ===== PYTANIA =====
 const questions = [
-    { q:"Wyznacznik macierzy |2 3; 1 4| wynosi:", answers:["5","8","2","7"], correct:0 },
-    { q:"Twórca teorii macierzy?", answers:["Arthur Cayley","Newton","Gauss","Euler"], correct:0 },
-    { q:"Wyznacznik |1 2; 3 4|:", answers:["-2","2","10","4"], correct:0 },
-    { q:"Det=0 → macierz:", answers:["nieodwracalna","odwracalna","jednostkowa","symetryczna"], correct:0 },
-    { q:"Wiek Cayleya?", answers:["XIX","XVIII","XX","XVII"], correct:0 },
-    { q:"Macierz jednostkowa:", answers:["1 na przekątnej","0 na przekątnej","2","ujemne"], correct:0 },
-    { q:"|3 1; 2 5|:", answers:["13","15","7","10"], correct:0 },
-    { q:"Symbol macierzy jednostkowej:", answers:["I","A","M","E"], correct:0 },
-    { q:"|4 2; 1 3|:", answers:["10","12","8","7"], correct:0 },
-    { q:"Metoda 3x3:", answers:["Sarrusa","Pitagorasa","Newtona","Euklidesa"], correct:0 }
+{q:"|2 3;1 4| =",answers:["5","8","2","7"],correct:0},
+{q:"Twórca macierzy?",answers:["Cayley","Newton","Gauss","Euler"],correct:0},
+{q:"|1 2;3 4| =",answers:["-2","2","10","4"],correct:0}
 ];
 
-// ===== ZMIENNE =====
-let current = 0;
-let fiftyUsed = false;
-let friendUsed = false;
-let timer;
-let timeLeft = 20;
+let current=0;
 
-const buttons = ["a","b","c","d"];
-
-// ===== TIMER =====
-function startTimer(){
-    clearInterval(timer);
-    timeLeft = 20;
-    document.getElementById("hint").innerText = "⏳ Czas: 20s";
-
-    timer = setInterval(()=>{
-        timeLeft--;
-        document.getElementById("hint").innerText = "⏳ Czas: " + timeLeft + "s";
-
-        if(timeLeft <= 0){
-            clearInterval(timer);
-            loseGame("⌛ Koniec czasu!");
-        }
-    },1000);
-}
-
-// ===== ŁADOWANIE PYTANIA =====
 function loadQuestion(){
-    let q = questions[current];
+    let q=questions[current];
 
-    document.getElementById("question").innerText =
-        `Pytanie o ${prizes[current]}:\n\n${q.q}`;
+    document.getElementById("question").innerText=q.q;
 
-    document.getElementById("a").innerText = "A. "+q.answers[0];
-    document.getElementById("b").innerText = "B. "+q.answers[1];
-    document.getElementById("c").innerText = "C. "+q.answers[2];
-    document.getElementById("d").innerText = "D. "+q.answers[3];
+    document.getElementById("a").innerText=q.answers[0];
 
-    buttons.forEach(id=>{
-        let btn=document.getElementById(id);
-        btn.style.visibility="visible";
-        btn.disabled=false;
-        btn.classList.remove("correct","wrong");
-    });
-
-    document.getElementById("score").innerText =
-        "Suma gwarantowana: " + getGuaranteedMoney(current);
-
-    startTimer();
-}
-
-// ===== SPRAWDZANIE =====
-function check(ans){
-    clearInterval(timer);
-    let correct = questions[current].correct;
-
-    buttons.forEach((id,i)=>{
-        let el=document.getElementById(id);
-        el.disabled=true;
-
-        if(i===correct){
-            el.classList.add("correct");
-        }
-    });
-
-    if(ans === correct){
-        correctSound.play();
-
-        setTimeout(()=>{
-            current++;
-            if(current < questions.length){
-                loadQuestion();
-            } else {
-                winGame();
-            }
-        },1500);
-    } else {
-        document.getElementById(buttons[ans]).classList.add("wrong");
-        wrongSound.play();
-
-        setTimeout(()=>{
-            loseGame("❌ Zła odpowiedź!");
-        },1500);
-    }
-}
-
-// ===== PRZEGRANA =====
-function loseGame(text){
-    let prize = getGuaranteedMoney(current);
-
-    document.getElementById("gameBox").innerHTML = `
-        <h1 style="color:red">${text}</h1>
-        <h2>Wygrywasz: ${prize}</h2>
-        <button onclick="restart()">Zagraj ponownie</button>
-    `;
-
-    saveScore(prize);
-}
-
-// ===== WYGRANA =====
-function winGame(){
-    winSound.play();
-
-    document.getElementById("gameBox").innerHTML = `
-        <h1 style="color:gold">🎉 MILION! 🎉</h1>
-        <h2>1 000 000 zł</h2>
-        <button onclick="restart()">Jeszcze raz</button>
-    `;
-
-    saveScore("1 000 000 zł");
-}
-
-// ===== ZAPIS WYNIKU =====
-function saveScore(score){
-    localStorage.setItem("lastScore", score);
-}
-
-// ===== RESET =====
-function restart(){
-    location.reload();
-}
-
-// ===== KOŁA RATUNKOWE =====
-document.getElementById("fifty").onclick = function(){
-    if(fiftyUsed) return;
-    fiftyUsed = true;
-
-    let correct = questions[current].correct;
-    let wrong = [];
-
-    for(let i=0;i<4;i++){
-        if(i!==correct) wrong.push(i);
-    }
-
-    wrong.sort(()=>Math.random()-0.5);
-
-    document.getElementById(buttons[wrong[0]]).style.visibility="hidden";
-    document.getElementById(buttons[wrong[1]]).style.visibility="hidden";
-
-    this.disabled=true;
-};
-
-// ===== TELEFON =====
-document.getElementById("friend").onclick = function(){
-    if(friendUsed) return;
-    friendUsed = true;
-
-    let correct = questions[current].correct;
-    let answers = ["A","B","C","D"];
-
-    let msg;
-
-    if(Math.random()<0.85){
-        msg = "Jestem prawie pewien... " + answers[correct];
-    } else {
-        msg = "Hmm... może " + answers[Math.floor(Math.random()*4)];
-    }
-
-    document.getElementById("hint").innerText = "📞 " + msg;
-
-    this.disabled = true;
-};
-
-// ===== KLIKNIĘCIA =====
-document.getElementById("a").onclick=()=>check(0);
-document.getElementById("b").onclick=()=>check(1);
-document.getElementById("c").onclick=()=>check(2);
-document.getElementById("d").onclick=()=>check(3);
-
-// ===== MUZYKA START (autoplay fix) =====
-document.body.addEventListener("click", ()=>{
-    let m = document.getElementById("bgMusic");
-    m.muted = false;
-    m.play();
-}, {once:true});
-
-// ===== START =====
-loadQuestion();
-</script>
