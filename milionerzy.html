@@ -5,14 +5,30 @@
 <title>Milionerzy</title>
 
 <style>
+
+/* TŁO */
 body{
     margin:0;
-    background:#001f5c;
+    background:#001a66;
     color:white;
     font-family:Arial;
-    text-align:center;
+    overflow:hidden;
 }
 
+/* LATAJĄCE $ */
+.money-bg span{
+    position:absolute;
+    color:gold;
+    font-size:25px;
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    0%{transform:translateY(-100px);}
+    100%{transform:translateY(100vh);}
+}
+
+/* GŁÓWNY EKRAN */
 .main{
     height:100vh;
     display:flex;
@@ -21,31 +37,43 @@ body{
     align-items:center;
 }
 
+/* TYTUŁ */
+h1{
+    font-size:80px;
+    color:gold;
+    margin-bottom:30px;
+}
+
+/* PYTANIE */
 .question{
-    font-size:30px;
+    font-size:35px;
     margin-bottom:40px;
     max-width:900px;
 }
 
-/* KAFELKI 2x2 */
+/* KAFELKI OGROMNE */
 .answers{
     display:grid;
     grid-template-columns: 1fr 1fr;
-    gap:20px;
-    width:600px;
+    gap:30px;
+    width:80%;
 }
 
 .card{
-    padding:20px;
-    font-size:20px;
-    background:#002b80;
-    border-radius:15px;
+    height:150px;
+    font-size:26px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#002bcc;
+    border-radius:20px;
     cursor:pointer;
     transition:0.3s;
 }
 
 .card:hover{
-    background:#0040ff;
+    background:#0055ff;
+    transform:scale(1.05);
 }
 
 .correct{background:green !important;}
@@ -53,26 +81,31 @@ body{
 
 .money{
     margin-top:30px;
-    font-size:24px;
+    font-size:30px;
     color:gold;
 }
 
+/* KOŁA */
 .lifelines button{
-    margin:5px;
-    padding:10px 20px;
+    padding:15px 30px;
+    font-size:18px;
+    margin:10px;
     background:orange;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     cursor:pointer;
 }
+
 </style>
 </head>
 
 <body>
 
+<div class="money-bg"></div>
+
 <div class="main">
 
-<h1>💰 Milionerzy</h1>
+<h1>💰 MILIONERZY 💰</h1>
 
 <div class="lifelines">
 <button onclick="use5050()">50/50</button>
@@ -94,48 +127,60 @@ body{
 
 <script>
 
+/* LATAJĄCE $ */
+for(let i=0;i<25;i++){
+    let s=document.createElement("span");
+    s.innerText="$";
+    s.style.left=Math.random()*100+"%";
+    s.style.animationDuration=(5+Math.random()*5)+"s";
+    document.querySelector(".money-bg").appendChild(s);
+}
+
+/* GRA */
+
 let current=0;
 
-const money=["100 zł","200 zł","500 zł","1000 zł",
+const money=[
+"100 zł","200 zł","500 zł","1000 zł",
 "2000 zł","5000 zł","10000 zł","50000 zł",
-"100000 zł","500000 zł","1000000 zł"];
+"100000 zł","500000 zł","1000000 zł"
+];
 
-// ✅ teraz poprawna odpowiedź NIE zawsze 0!
 const questions=[
 {
 q:"Metoda Sarrusa służy do:",
-answers:["liczenia wyznacznika 3x3","transpozycji","mnożenia","Gaussa"],
+answers:["wyznacznika 3x3","transpozycji","mnożenia","Gaussa"],
 correct:0
 },
 {
 q:"Jeśli det ≠ 0 to macierz:",
-answers:["jest odwracalna","nie istnieje","jest zerowa","ma ∞ rozwiązań"],
+answers:["jest odwracalna","zerowa","losowa","ma ∞ rozwiązań"],
 correct:0
 },
 {
 q:"Metoda Gaussa polega na:",
 answers:[
 "sprowadzaniu do postaci schodkowej",
-"liczeniu pola",
 "transpozycji",
-"odwracaniu"
+"wyznaczaniu det 2x2",
+"mnożeniu macierzy"
 ],
 correct:0
 },
 {
 q:"Twierdzenie Kroneckera-Capellego mówi o:",
 answers:[
-"liczbie rozwiązań układu",
-"wyznacznikach",
-"iloczynie",
-"macierzy jednostkowej"
+"liczbie rozwiązań",
+"macierzy zerowej",
+"wyznaczniku",
+"transpozycji"
 ],
 correct:0
 },
 {
 q:"Układ ma jedno rozwiązanie gdy:",
 answers:[
-"rzędy macierzy są równe liczbie niewiadomych",
+"rzędy = liczbie niewiadomych",
 "det=0",
 "brak równań",
 "zawsze"
@@ -144,13 +189,12 @@ correct:0
 }
 ];
 
-// 🔥 LOSOWANIE odpowiedzi (miesza kolejność)
+/* MIESZANIE ODPOWIEDZI */
 function shuffle(q){
-    let arr = q.answers.map((a,i)=>({text:a,id:i}));
+    let arr=q.answers.map((a,i)=>({text:a,id:i}));
     arr.sort(()=>Math.random()-0.5);
-
-    q.shuffled = arr;
-    q.newCorrect = arr.findIndex(a=>a.id===q.correct);
+    q.shuffled=arr;
+    q.newCorrect=arr.findIndex(a=>a.id===q.correct);
 }
 
 questions.forEach(q=>shuffle(q));
@@ -171,14 +215,12 @@ function load(){
 function answer(i){
     let q=questions[current];
     let correct=q.newCorrect;
-
     let ids=["a","b","c","d"];
 
     ids.forEach((id,idx)=>{
         let el=document.getElementById(id);
 
         if(idx===correct) el.classList.add("correct");
-
         el.onclick=null;
     });
 
@@ -192,35 +234,31 @@ function answer(i){
             if(current<questions.length){
                 reset();
                 load();
-            } else {
-                document.body.innerHTML="<h1>🎉 MILION!</h1>";
+            }else{
+                document.body.innerHTML="<h1>🎉 MILION ZDOBYTY!</h1>";
             }
-        } else {
+        }else{
             document.body.innerHTML="<h1>❌ KONIEC GRY</h1>";
         }
     },1500);
 }
 
 function reset(){
-    let ids=["a","b","c","d"];
-
-    ids.forEach(id=>{
+    ["a","b","c","d"].forEach((id,i)=>{
         let el=document.getElementById(id);
-        el.classList="";
-        el.onclick=()=>answer(ids.indexOf(id));
+        el.classList="card";
+        el.onclick=()=>answer(i);
         el.style.visibility="visible";
     });
 }
 
-// ✅ 50/50
+/* 50/50 */
 function use5050(){
     let q=questions[current];
     let correct=q.newCorrect;
-
     let removed=0;
-    let ids=["a","b","c","d"];
 
-    ids.forEach((id,i)=>{
+    ["a","b","c","d"].forEach((id,i)=>{
         if(i!==correct && removed<2){
             document.getElementById(id).style.visibility="hidden";
             removed++;
@@ -228,10 +266,10 @@ function use5050(){
     });
 }
 
-// ✅ telefon
+/* telefon */
 function friend(){
     let q=questions[current];
-    alert("Przyjaciel mówi: chyba "+["A","B","C","D"][q.newCorrect]);
+    alert("Przyjaciel: myślę że "+["A","B","C","D"][q.newCorrect]);
 }
 
 load();
