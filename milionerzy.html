@@ -13,9 +13,7 @@ body{
     text-align:center;
 }
 
-/* CAŁY EKRAN */
 .main{
-    width:100%;
     height:100vh;
     display:flex;
     flex-direction:column;
@@ -23,40 +21,40 @@ body{
     align-items:center;
 }
 
-/* pytanie */
 .question{
     font-size:30px;
     margin-bottom:40px;
     max-width:900px;
 }
 
-/* przyciski */
+/* KAFELKI 2x2 */
 .answers{
-    width:60%;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:20px;
+    width:600px;
 }
 
-.answers button{
-    width:100%;
-    padding:15px;
-    margin:10px 0;
+.card{
+    padding:20px;
     font-size:20px;
     background:#002b80;
-    color:white;
-    border:none;
-    border-radius:10px;
+    border-radius:15px;
     cursor:pointer;
+    transition:0.3s;
 }
 
-.answers button:hover{
+.card:hover{
     background:#0040ff;
 }
 
 .correct{background:green !important;}
 .wrong{background:red !important;}
 
-/* koła ratunkowe */
-.lifelines{
-    margin-bottom:30px;
+.money{
+    margin-top:30px;
+    font-size:24px;
+    color:gold;
 }
 
 .lifelines button{
@@ -66,13 +64,6 @@ body{
     border:none;
     border-radius:8px;
     cursor:pointer;
-}
-
-/* pieniądze */
-.money{
-    margin-top:20px;
-    font-size:24px;
-    color:gold;
 }
 </style>
 </head>
@@ -85,16 +76,16 @@ body{
 
 <div class="lifelines">
 <button onclick="use5050()">50/50</button>
-<button onclick="callFriend()">📞 Przyjaciel</button>
+<button onclick="friend()">📞 Przyjaciel</button>
 </div>
 
 <div class="question" id="question"></div>
 
 <div class="answers">
-<button id="a" onclick="answer(0)"></button>
-<button id="b" onclick="answer(1)"></button>
-<button id="c" onclick="answer(2)"></button>
-<button id="d" onclick="answer(3)"></button>
+<div id="a" class="card" onclick="answer(0)"></div>
+<div id="b" class="card" onclick="answer(1)"></div>
+<div id="c" class="card" onclick="answer(2)"></div>
+<div id="d" class="card" onclick="answer(3)"></div>
 </div>
 
 <div class="money" id="money"></div>
@@ -103,50 +94,49 @@ body{
 
 <script>
 
-let current = 0;
+let current=0;
 
-const moneyLevels = [
-"100 zł","200 zł","500 zł","1000 zł",
+const money=["100 zł","200 zł","500 zł","1000 zł",
 "2000 zł","5000 zł","10000 zł","50000 zł",
-"100000 zł","500000 zł","1000000 zł"
-];
+"100000 zł","500000 zł","1000000 zł"];
 
-const questions = [
+// ✅ teraz poprawna odpowiedź NIE zawsze 0!
+const questions=[
 {
-q:"Wyznacznik macierzy 3x3 liczymy metodą:",
-answers:["Sarrusa","Newtona","Pitagorasa","Laplace tylko"],
+q:"Metoda Sarrusa służy do:",
+answers:["liczenia wyznacznika 3x3","transpozycji","mnożenia","Gaussa"],
 correct:0
 },
 {
-q:"Jeśli det ≠ 0 to macierz jest:",
-answers:["odwracalna","zerowa","symetryczna","losowa"],
+q:"Jeśli det ≠ 0 to macierz:",
+answers:["jest odwracalna","nie istnieje","jest zerowa","ma ∞ rozwiązań"],
 correct:0
 },
 {
-q:"Metoda Gaussa służy do:",
+q:"Metoda Gaussa polega na:",
 answers:[
-"rozwiązywania układów równań",
-"mnożenia macierzy",
+"sprowadzaniu do postaci schodkowej",
+"liczeniu pola",
 "transpozycji",
-"wyznaczników 2x2"
+"odwracaniu"
 ],
 correct:0
 },
 {
-q:"Kronecker-Capelli mówi o:",
+q:"Twierdzenie Kroneckera-Capellego mówi o:",
 answers:[
 "liczbie rozwiązań układu",
 "wyznacznikach",
-"transpozycji",
-"iloczynie macierzy"
+"iloczynie",
+"macierzy jednostkowej"
 ],
 correct:0
 },
 {
 q:"Układ ma jedno rozwiązanie gdy:",
 answers:[
-"rzędy macierzy są równe i = liczbie niewiadomych",
-"det = 0",
+"rzędy macierzy są równe liczbie niewiadomych",
+"det=0",
 "brak równań",
 "zawsze"
 ],
@@ -154,82 +144,94 @@ correct:0
 }
 ];
 
+// 🔥 LOSOWANIE odpowiedzi (miesza kolejność)
+function shuffle(q){
+    let arr = q.answers.map((a,i)=>({text:a,id:i}));
+    arr.sort(()=>Math.random()-0.5);
+
+    q.shuffled = arr;
+    q.newCorrect = arr.findIndex(a=>a.id===q.correct);
+}
+
+questions.forEach(q=>shuffle(q));
+
 function load(){
-    let q = questions[current];
+    let q=questions[current];
 
-    document.getElementById("question").innerText = q.q;
-    document.getElementById("a").innerText = "A. " + q.answers[0];
-    document.getElementById("b").innerText = "B. " + q.answers[1];
-    document.getElementById("c").innerText = "C. " + q.answers[2];
-    document.getElementById("d").innerText = "D. " + q.answers[3];
+    document.getElementById("question").innerText=q.q;
 
-    document.getElementById("money").innerText =
-    "Wygrana: " + moneyLevels[current];
+    document.getElementById("a").innerText="A. "+q.shuffled[0].text;
+    document.getElementById("b").innerText="B. "+q.shuffled[1].text;
+    document.getElementById("c").innerText="C. "+q.shuffled[2].text;
+    document.getElementById("d").innerText="D. "+q.shuffled[3].text;
+
+    document.getElementById("money").innerText="Wygrana: "+money[current];
 }
 
 function answer(i){
-    let correct = questions[current].correct;
+    let q=questions[current];
+    let correct=q.newCorrect;
 
-    let buttons = ["a","b","c","d"];
+    let ids=["a","b","c","d"];
 
-    for(let j=0;j<4;j++){
-        let b = document.getElementById(buttons[j]);
-        b.disabled = true;
+    ids.forEach((id,idx)=>{
+        let el=document.getElementById(id);
 
-        if(j===correct){
-            b.classList.add("correct");
-        }
-    }
+        if(idx===correct) el.classList.add("correct");
+
+        el.onclick=null;
+    });
 
     if(i!==correct){
-        document.getElementById(buttons[i]).classList.add("wrong");
+        document.getElementById(ids[i]).classList.add("wrong");
     }
 
     setTimeout(()=>{
         if(i===correct){
             current++;
-
-            if(current < questions.length){
+            if(current<questions.length){
                 reset();
                 load();
-            }else{
-                document.body.innerHTML="<h1>🎉 WYGRAŁEŚ MILION!</h1>";
+            } else {
+                document.body.innerHTML="<h1>🎉 MILION!</h1>";
             }
-        }else{
+        } else {
             document.body.innerHTML="<h1>❌ KONIEC GRY</h1>";
         }
     },1500);
 }
 
 function reset(){
-    let buttons=["a","b","c","d"];
-    for(let i=0;i<4;i++){
-        let b=document.getElementById(buttons[i]);
-        b.disabled=false;
-        b.classList="";
-        b.style.visibility="visible";
-    }
+    let ids=["a","b","c","d"];
+
+    ids.forEach(id=>{
+        let el=document.getElementById(id);
+        el.classList="";
+        el.onclick=()=>answer(ids.indexOf(id));
+        el.style.visibility="visible";
+    });
 }
 
 // ✅ 50/50
 function use5050(){
-    let correct = questions[current].correct;
-    let removed = 0;
+    let q=questions[current];
+    let correct=q.newCorrect;
 
-    let buttons = ["a","b","c","d"];
+    let removed=0;
+    let ids=["a","b","c","d"];
 
-    for(let i=0;i<4;i++){
+    ids.forEach((id,i)=>{
         if(i!==correct && removed<2){
-            document.getElementById(buttons[i]).style.visibility="hidden";
+            document.getElementById(id).style.visibility="hidden";
             removed++;
         }
-    }
+    });
 }
 
 // ✅ telefon
-function callFriend(){
-    let correct = questions[current].correct;
-    alert("Przyjaciel mówi: chyba " + ["A","B","C","D"][correct]);
+function friend(){
+    let q=questions[current];
+    alert("Przyjaciel mówi: chyba "+["A","B","C","D"][q.newCorrect]);
 }
 
 load();
@@ -238,4 +240,3 @@ load();
 
 </body>
 </html>
-
