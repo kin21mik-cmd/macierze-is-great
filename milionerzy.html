@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>💰 Milionerzy – Macierze</title>
+<title>💰 Milionerzy – Macierze PRO</title>
 
 <style>
 body{
@@ -12,15 +12,11 @@ body{
     text-align:center;
 }
 
-h1{
-    margin-top:20px;
-    color:#444;
-}
+h1{ margin-top:15px; color:#444; }
 
 #question{
     font-size:22px;
     margin:20px;
-    color:#333;
     min-height:80px;
 }
 
@@ -39,26 +35,49 @@ button{
     border-radius:15px;
     cursor:pointer;
     background:#ffd6e0;
-    transition:0.2s;
 }
 
-button:hover{
-    background:#ffb3c6;
-}
+button:hover{ background:#ffb3c6; }
 
 #money{
-    margin-top:20px;
     font-weight:bold;
-    color:#444;
+    margin-top:10px;
+}
+
+#lifelines button{
+    margin:5px;
+    padding:10px;
+    font-size:14px;
+    background:#caffbf;
+}
+
+#fireworks{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    display:none;
+    background:black;
+    color:white;
+    font-size:40px;
+    justify-content:center;
+    align-items:center;
 }
 </style>
 </head>
 
 <body>
 
-<h1>💰 Milionerzy – Macierze (Gauss-Jordan)</h1>
+<h1>💰 Milionerzy – Macierze PRO</h1>
 
 <div id="money">💵 0 zł</div>
+
+<div id="lifelines">
+    <button onclick="fifty()">50/50</button>
+    <button onclick="friend()">👤 Przyjaciel</button>
+    <button onclick="audience()">👥 Publiczność</button>
+</div>
+
 <div id="question">Ładowanie...</div>
 
 <div class="container">
@@ -68,77 +87,40 @@ button:hover{
     <button id="d" onclick="check(3)"></button>
 </div>
 
+<div id="fireworks">🎆 WYGRAŁEŚ 1 000 000 zł 🎆</div>
+
 <script>
 
-// ===== PYTANIA (TYLKO MACIERZE) =====
+// ===== DRABINKA =====
+const ladder = [
+0,100,500,1000,2000,5000,10000,20000,40000,75000,125000,250000,500000,750000,1000000
+];
+
+// ===== PYTANIA (MACIERZE) =====
 const questions = [
-{
-q: "Oblicz det: |1 2; 3 4|",
-a: ["-2","2","10","0"],
-c: 0,
-money: 1000
-},
-{
-q: "Co oznacza RREF?",
-a: [
-"zredukowana postać schodkowa",
-"losowa macierz",
-"transpozycja",
-"macierz diagonalna"
-],
-c: 0,
-money: 2000
-},
-{
-q: "Czy macierz jest odwracalna gdy det = 0?",
-a: ["tak","nie","zawsze","czasem"],
-c: 1,
-money: 5000
-},
-{
-q: "W metodzie Gaussa eliminujemy:",
-a: ["elementy poniżej przekątnej","losowe liczby","wiersze całkowicie","kolumny"],
-c: 0,
-money: 10000
-},
-{
-q: "Macierz jednostkowa 2x2 to:",
-a: ["1 0; 0 1","0 0; 0 0","1 1; 1 1","2 2; 2 2"],
-c: 0,
-money: 20000
-},
-{
-q: "Co daje Gauss-Jordan?",
-a: [
-"postać RREF",
-"determinant",
-"transpozycję",
-"wektor własny"
-],
-c: 0,
-money: 40000
-},
-{
-q: "Rozwiązanie układu równań przez macierze polega na:",
-a: [
-"operacjach elementarnych na wierszach",
-"mnożeniu losowym",
-"dzieleniu kolumn",
-"sumowaniu macierzy"
-],
-c: 0,
-money: 75000
-}
+{q:"det |1 2; 3 4|",a:["-2","2","10","0"],c:0},
+{q:"RREF to:",a:["postać zredukowana","losowa","odwrotna","diag."],c:0},
+{q:"det=0 oznacza:",a:["brak odwrotnej","zawsze odwrotna","jednostkowa","losowa"],c:0},
+{q:"Gauss eliminuje:",a:["dolny trójkąt","kolumny","los","całość"],c:0},
+{q:"Macierz I2:",a:["1 0;0 1","0 0","1 1","2 2"],c:0},
+{q:"Gauss-Jordan daje:",a:["RREF","det","transpose","wektor"],c:0},
+{q:"Operacje elementarne:",a:["wiersze","kolumny","los","dodawanie"],c:0},
+{q:"Układ równań:",a:["macierz rozszerzona","los","vector","skalar"],c:0},
+{q:"Macierz odwrotna istnieje gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0},
+{q:"Rząd macierzy to:",a:["liczba niezależnych wierszy","los","det","kolumny"],c:0},
+{q:"Transpozycja:",a:["zamiana wierszy i kolumn","los","dodawanie","mnożenie"],c:0},
+{q:"Mnożenie macierzy:",a:["wiersz × kolumna","los","det","sumowanie"],c:0},
+{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0},
+{q:"Układ sprzeczny:",a:["brak rozwiązań","∞","1","2"],c:0},
+{q:"Milioner pytanie:",a:["ostatnie","los","łatwe","średnie"],c:0}
 ];
 
 let i = 0;
 let cash = 0;
 
-// ===== DŹWIĘKI (opcjonalnie) =====
-const correct = new Audio("correct.mp3");
-const wrong = new Audio("wrong.mp3");
+let fiftyUsed = false;
 
-// ===== ŁADOWANIE =====
+// ===== FUNKCJE =====
 function load(){
     let q = questions[i];
 
@@ -152,27 +134,50 @@ function load(){
     document.getElementById("money").innerText = "💵 " + cash + " zł";
 }
 
-// ===== SPRAWDZANIE =====
 function check(ans){
     let q = questions[i];
 
     if(ans === q.c){
-        cash = q.money;
-        correct.play();
+        cash = ladder[i];
 
         i++;
 
-        if(i < questions.length){
-            load();
+        if(i === questions.length){
+            win();
         } else {
-            document.getElementById("question").innerText =
-            "🎉 WYGRANA – pełna znajomość macierzy!";
+            load();
         }
     } else {
-        wrong.play();
-        document.getElementById("question").innerText =
-        "❌ KONIEC GRY – spróbuj jeszcze raz";
+        document.getElementById("question").innerText = "❌ KONIEC GRY – " + cash + " zł";
     }
+}
+
+// ===== KOŁA RATUNKOWE =====
+function fifty(){
+    if(fiftyUsed) return;
+    fiftyUsed = true;
+
+    let q = questions[i];
+    let wrong = [1,2,3].filter(x => x !== q.c);
+
+    document.getElementById("a").innerText = (q.c === 0 || wrong.includes(0)) ? q.a[0] : "";
+    document.getElementById("b").innerText = (q.c === 1 || wrong.includes(1)) ? q.a[1] : "";
+    document.getElementById("c").innerText = (q.c === 2 || wrong.includes(2)) ? q.a[2] : "";
+    document.getElementById("d").innerText = (q.c === 3 || wrong.includes(3)) ? q.a[3] : "";
+}
+
+function friend(){
+    alert("👤 Przyjaciel: wydaje mi się że poprawna odpowiedź to: " + questions[i].a[questions[i].c]);
+}
+
+function audience(){
+    alert("👥 Publiczność: większość głosów na: " + questions[i].a[questions[i].c]);
+}
+
+// ===== WYGRANA =====
+function win(){
+    document.getElementById("fireworks").style.display="flex";
+    document.getElementById("fireworks").innerText="🎆 WYGRAŁEŚ 1 000 000 zł 🎆";
 }
 
 load();
