@@ -26,12 +26,15 @@ h1{
 }
 
 .arrow {
-    width: 0;
+ 
+width: 0;
     height: 0;
     margin: 0 auto;
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
-    border-bottom: 30px solid #ff6b81;
+    border-top: 30px solid #ff6b81;
+}
+
 }
 
 button{
@@ -154,7 +157,8 @@ drawWheel();
 
 // ===== LOSOWANIE =====
 function spin(){
-    currentIndex = Math.floor(Math.random()*tasks.length);
+   
+  currentIndex = Math.floor(Math.random()*tasks.length);
 
     const sliceAngle = 360 / tasks.length;
     const extraSpins = 360 * 5;
@@ -164,6 +168,8 @@ function spin(){
 
     canvas.style.transform = `rotate(${currentRotation}deg)`;
 
+    // 🔥 NOWE: czyszczenie od razu
+    document.getElementById("question").innerText = "Losowanie...";
     document.getElementById("answer").innerText = "";
     document.getElementById("matrixImg").style.display = "none";
 
@@ -177,6 +183,8 @@ function spin(){
         }
     },5000);
 }
+``
+
 
 // ===== ODPOWIEDŹ =====
 function showAnswer(){
