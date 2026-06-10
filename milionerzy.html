@@ -1,279 +1,87 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
-<title>Milionerzy TV</title>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#050814;
-    color:white;
-    overflow:hidden;
-}
-
-/* START */
-#startScreen{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:10;
-}
-
-#startBtn{
-    padding:20px 40px;
-    font-size:24px;
-    border:none;
-    border-radius:20px;
-    background:#ffd166;
-    cursor:pointer;
-}
-
-/* TOP MONEY */
-#money{
-    text-align:center;
-    padding:10px;
-    color:#4ade80;
-    font-size:20px;
-}
-
-/* QUESTION */
-#questionBox{
-    width:80%;
-    margin:20px auto;
-    padding:30px;
-    background:#0f172a;
-    border-radius:20px;
-    font-size:28px;
-    text-align:center;
-    box-shadow:0 0 30px rgba(255,255,255,0.1);
-    min-height:80px;
-}
-
-/* ANSWERS */
-.grid{
-    width:80%;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-
-.option{
-    background:#111827;
-    padding:20px;
-    border-radius:15px;
-    font-size:20px;
-    cursor:pointer;
-    transition:0.2s;
-    border:2px solid transparent;
-}
-
-.option:hover{
-    border:2px solid #ffd166;
-    transform:scale(1.02);
-}
-
-/* LIFELINES */
-#lifelines{
-    text-align:center;
-    margin:10px;
-}
-
-button{
-    margin:5px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    background:#334155;
-    color:white;
-}
-
-/* GAME OVER */
-#gameover, #win{
-    display:none;
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    background:black;
-    justify-content:center;
-    align-items:center;
-    font-size:40px;
-    z-index:20;
-}
-#win{ color:gold; }
-#gameover{ color:red; }
-</style>
-</head>
-
-<body>
-
-<!-- START -->
-<div id="startScreen">
-    <h1>💰 MILIONERZY</h1>
-    <button id="startBtn" onclick="startGame()">▶ START</button>
-</div>
-
-<div id="money">💵 0 zł</div>
-
-<div id="lifelines">
-    <button onclick="fifty()">50/50</button>
-    <button onclick="friend()">👤 Przyjaciel</button>
-    <button onclick="audience()">👥 Publiczność</button>
-</div>
-
-<div id="questionBox">...</div>
-
-<div class="grid">
-    <div class="option" onclick="answer(0)" id="a"></div>
-    <div class="option" onclick="answer(1)" id="b"></div>
-    <div class="option" onclick="answer(2)" id="c"></div>
-    <div class="option" onclick="answer(3)" id="d"></div>
-</div>
-
-<div id="gameover">❌ KONIEC GRY</div>
-<div id="win">🎆 1 000 000 ZŁ 🎆</div>
-
-<!-- MUZYKA -->
-<audio id="intro" src="music.mp3"></audio>
-<audio id="game" src="game.mp3" loop></audio>
-<audio id="stress" src="stress.mp3" loop></audio>
-<audio id="winMusic" src="win.mp3"></audio>
-
-<script>
-
-// ===== DRABINKA =====
-const money = [
-0,100,500,1000,2000,5000,10000,20000,40000,75000,
-125000,250000,500000,750000,1000000
-];
-
-// ===== PYTANIA (POPRAWNE, NIE SAME A) =====
 const q = [
-{q:"det([[2,1],[5,3]]) =",a:["1","-1","6","0"],c:1},
-{q:"RREF oznacza:",a:["zredukowana postać","losowa","transpose","diag"],c:0},
-{q:"Macierz odwracalna gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0},
-{q:"Gauss operuje na:",a:["wierszach","kolumnach","los","det"],c:0},
-{q:"I₂ to:",a:["1 0;0 1","0 0","1 1","2 2"],c:0},
-{q:"Ax=b to:",a:["układ równań","wektor","los","det"],c:0},
-{q:"Rząd macierzy:",a:["niezależne wiersze","det","sumy","los"],c:0},
-{q:"Eliminacja usuwa:",a:["pod przekątną","nad","los","wszystko"],c:0},
-{q:"Transpozycja:",a:["wiersze↔kolumny","los","det","+"],c:0},
-{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0}
+
+{
+q:"det([[2,1],[5,3]]) =",
+a:["-1","1","6","0"],
+c:1 // B
+},
+
+{
+q:"Macierz odwracalna istnieje gdy:",
+a:["det=0","det≠0","zawsze","nigdy"],
+c:1 // B
+},
+
+{
+q:"RREF oznacza:",
+a:["transpozycję",
+   "macierz diagonalną",
+   "zredukowaną postać schodkową",
+   "rozkład LU"],
+c:2 // C
+},
+
+{
+q:"Macierz jednostkowa I₂ to:",
+a:["0 0;0 0",
+   "1 1;1 1",
+   "2 0;0 2",
+   "1 0;0 1"],
+c:3 // D
+},
+
+{
+q:"Która operacja jest dozwolona w metodzie Gaussa?",
+a:["dodanie wielokrotności jednego wiersza do drugiego",
+   "zamiana kolumn miejscami bez ograniczeń",
+   "usuwanie wiersza",
+   "usuwanie kolumny"],
+c:0 // A
+},
+
+{
+q:"Rząd macierzy oznacza:",
+a:["liczbę kolumn",
+   "liczbę niezależnych liniowo wierszy lub kolumn",
+   "sumę elementów przekątnej",
+   "wyznacznik"],
+c:1 // B
+},
+
+{
+q:"Jeżeli po eliminacji otrzymamy wiersz [0 0 0 | 5], to układ jest:",
+a:["oznaczony",
+   "nieoznaczony",
+   "sprzeczny",
+   "jednorodny"],
+c:2 // C
+},
+
+{
+q:"Transpozycja macierzy polega na:",
+a:["odwróceniu macierzy",
+   "pomnożeniu przez -1",
+   "zamianie wierszy z kolumnami",
+   "obliczeniu wyznacznika"],
+c:2 // C
+},
+
+{
+q:"Wyznacznik macierzy [[1,2],[3,4]] wynosi:",
+a:["2",
+   "10",
+   "-2",
+   "1"],
+c:2 // C
+},
+
+{
+q:"Macierz zerowa to macierz:",
+a:["o wyznaczniku 1",
+   "z samymi zerami",
+   "jednostkowa",
+   "trójkątna"],
+c:1 // B
+}
+
 ];
-
-let i=0;
-let cash=0;
-let used5050=false;
-
-// ===== MUZYKA =====
-const intro=document.getElementById("intro");
-const game=document.getElementById("game");
-const stress=document.getElementById("stress");
-const winMusic=document.getElementById("winMusic");
-
-// ===== START =====
-function startGame(){
-    document.getElementById("startScreen").style.display="none";
-
-    intro.volume=0.6;
-    intro.play();
-
-    setTimeout(()=>{
-        intro.pause();
-        game.volume=0.4;
-        game.play();
-        load();
-    },4000);
-}
-
-// ===== LOAD =====
-function load(){
-
-    let x=q[i];
-
-    document.getElementById("questionBox").innerText=x.q;
-
-    document.getElementById("a").innerText="A: "+x.a[0];
-    document.getElementById("b").innerText="B: "+x.a[1];
-    document.getElementById("c").innerText="C: "+x.a[2];
-    document.getElementById("d").innerText="D: "+x.a[3];
-
-    document.getElementById("money").innerText="💵 "+cash+" zł";
-
-    if(i>=6){
-        game.pause();
-        stress.play();
-    }
-}
-
-// ===== ANSWER =====
-function answer(n){
-
-    if(n===q[i].c){
-
-        cash=money[i];
-        i++;
-
-        if(i===q.length){
-            win();
-        } else {
-            load();
-        }
-
-    } else {
-        restart();
-    }
-}
-
-// ===== RESTART =====
-function restart(){
-    document.getElementById("gameover").style.display="flex";
-
-    setTimeout(()=>{
-        document.getElementById("gameover").style.display="none";
-        i=0;
-        cash=0;
-        load();
-    },2000);
-}
-
-// ===== WIN =====
-function win(){
-    game.pause();
-    stress.pause();
-
-    winMusic.play();
-
-    document.getElementById("win").style.display="flex";
-}
-
-// ===== LIFELINES =====
-function fifty(){
-    let wrong=[0,1,2,3].filter(x=>x!==q[i].c);
-    wrong.slice(0,2).forEach(x=>{
-        document.getElementById(["a","b","c","d"][x]).innerText="";
-    });
-}
-
-function friend(){
-    alert("👤 Myślę że: "+q[i].a[q[i].c]);
-}
-
-function audience(){
-    alert("👥 Publiczność wskazuje: "+q[i].a[q[i].c]);
-}
-
-</script>
-
-</body>
-</html>
