@@ -2,63 +2,97 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>💰 Milionerzy – Macierze PRO</title>
+<title>Milionerzy – Macierze TV</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial;
-    background: linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
+    background:#0b0f1a;
+    color:white;
+}
+
+/* GÓRA */
+#top{
     text-align:center;
+    padding:10px;
+    font-size:20px;
+    color:#ffd166;
 }
 
-h1{ margin-top:15px; color:#444; }
-
-#question{
-    font-size:22px;
-    margin:20px;
-    min-height:80px;
+/* EKRAN PYTANIA */
+#questionBox{
+    width:80%;
+    margin:20px auto;
+    padding:25px;
+    background:#111827;
+    border-radius:20px;
+    font-size:26px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(255,255,255,0.1);
 }
 
-.container{
+/* ODPOWIEDZI */
+.grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:15px;
-    width:60%;
+    width:80%;
     margin:0 auto;
 }
 
-button{
-    padding:15px;
-    font-size:18px;
-    border:none;
+.option{
+    background:#1f2937;
+    padding:20px;
     border-radius:15px;
+    font-size:20px;
     cursor:pointer;
-    background:#ffd6e0;
+    transition:0.2s;
+    border:2px solid transparent;
 }
 
-button:hover{ background:#ffb3c6; }
+.option:hover{
+    border:2px solid #ffd166;
+    transform:scale(1.02);
+}
 
+/* DOLNY PANEL */
 #money{
-    font-weight:bold;
-    margin-top:10px;
+    text-align:center;
+    margin-top:15px;
+    color:#4ade80;
+    font-size:18px;
 }
 
-#lifelines button{
+/* KOŁA RATUNKOWE */
+#lifelines{
+    text-align:center;
+    margin:10px;
+}
+
+button{
     margin:5px;
     padding:10px;
-    font-size:14px;
-    background:#caffbf;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#334155;
+    color:white;
 }
 
-#fireworks{
+button:hover{
+    background:#475569;
+}
+
+/* GAME OVER */
+#gameover{
+    display:none;
     position:fixed;
     top:0;left:0;
     width:100%;
     height:100%;
-    display:none;
     background:black;
-    color:white;
+    color:red;
     font-size:40px;
     justify-content:center;
     align-items:center;
@@ -68,7 +102,7 @@ button:hover{ background:#ffb3c6; }
 
 <body>
 
-<h1>💰 Milionerzy – Macierze PRO</h1>
+<div id="top">💰 MILIONERZY – MACIERZE (Gauss / RREF / det)</div>
 
 <div id="money">💵 0 zł</div>
 
@@ -78,106 +112,194 @@ button:hover{ background:#ffb3c6; }
     <button onclick="audience()">👥 Publiczność</button>
 </div>
 
-<div id="question">Ładowanie...</div>
+<div id="questionBox">Ładowanie...</div>
 
-<div class="container">
-    <button id="a" onclick="check(0)"></button>
-    <button id="b" onclick="check(1)"></button>
-    <button id="c" onclick="check(2)"></button>
-    <button id="d" onclick="check(3)"></button>
+<div class="grid">
+    <div class="option" onclick="answer(0)" id="a"></div>
+    <div class="option" onclick="answer(1)" id="b"></div>
+    <div class="option" onclick="answer(2)" id="c"></div>
+    <div class="option" onclick="answer(3)" id="d"></div>
 </div>
 
-<div id="fireworks">🎆 WYGRAŁEŚ 1 000 000 zł 🎆</div>
+<div id="gameover">❌ KONIEC GRY</div>
 
 <script>
 
 // ===== DRABINKA =====
-const ladder = [
+const money = [
 0,100,500,1000,2000,5000,10000,20000,40000,75000,125000,250000,500000,750000,1000000
 ];
 
-// ===== PYTANIA (MACIERZE) =====
-const questions = [
-{q:"det |1 2; 3 4|",a:["-2","2","10","0"],c:0},
-{q:"RREF to:",a:["postać zredukowana","losowa","odwrotna","diag."],c:0},
-{q:"det=0 oznacza:",a:["brak odwrotnej","zawsze odwrotna","jednostkowa","losowa"],c:0},
-{q:"Gauss eliminuje:",a:["dolny trójkąt","kolumny","los","całość"],c:0},
-{q:"Macierz I2:",a:["1 0;0 1","0 0","1 1","2 2"],c:0},
-{q:"Gauss-Jordan daje:",a:["RREF","det","transpose","wektor"],c:0},
-{q:"Operacje elementarne:",a:["wiersze","kolumny","los","dodawanie"],c:0},
-{q:"Układ równań:",a:["macierz rozszerzona","los","vector","skalar"],c:0},
-{q:"Macierz odwrotna istnieje gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0},
-{q:"Rząd macierzy to:",a:["liczba niezależnych wierszy","los","det","kolumny"],c:0},
-{q:"Transpozycja:",a:["zamiana wierszy i kolumn","los","dodawanie","mnożenie"],c:0},
-{q:"Mnożenie macierzy:",a:["wiersz × kolumna","los","det","sumowanie"],c:0},
-{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0},
-{q:"Układ sprzeczny:",a:["brak rozwiązań","∞","1","2"],c:0},
-{q:"Milioner pytanie:",a:["ostatnie","los","łatwe","średnie"],c:0}
+// ===== POPRAWIONE PYTANIA (MATEMATYCZNE) =====
+const q = [
+{
+q:"Oblicz det: det([[2,1],[5,3]])",
+a:["1","-1","6","0"],
+c:0
+},
+{
+q:"Co oznacza RREF?",
+a:[
+"zredukowana postać schodkowa",
+"losowa macierz",
+"transpozycja",
+"macierz diagonalna"
+],
+c:0
+},
+{
+q:"Kiedy macierz 2×2 jest odwracalna?",
+a:[
+"gdy det ≠ 0",
+"gdy det = 0",
+"zawsze",
+"nigdy"
+],
+c:0
+},
+{
+q:"Operacje Gaussa polegają na:",
+a:[
+"operacjach na wierszach",
+"losowaniu liczb",
+"mnożeniu kolumn",
+"dodawaniu wyznaczników"
+],
+c:0
+},
+{
+q:"Macierz jednostkowa I₂ to:",
+a:[
+"[[1,0],[0,1]]",
+"[[0,0],[0,0]]",
+"[[1,1],[1,1]]",
+"[[2,2],[2,2]]"
+],
+c:0
+},
+{
+q:"Gauss–Jordan prowadzi do:",
+a:[
+"RREF",
+"determinantu",
+"transpozycji",
+"wektora"
+],
+c:0
+},
+{
+q:"Układ równań liniowych zapisujemy jako:",
+a:[
+"Ax = b",
+"A + B = C",
+"A × B = det",
+"x / A = B"
+],
+c:0
+},
+{
+q:"Rząd macierzy to:",
+a:[
+"liczba niezależnych wierszy",
+"determinant",
+"sumy elementów",
+"kolumny losowe"
+],
+c:0
+},
+{
+q:"Macierz osobliwa to taka, która:",
+a:[
+"ma det = 0",
+"ma det = 1",
+"jest diagonalna",
+"jest jednostkowa"
+],
+c:0
+},
+{
+q:"Eliminacja Gaussa usuwa elementy:",
+a:[
+"pod główną przekątną",
+"nad przekątną",
+"losowe",
+"wszystkie"
+],
+c:0
+}
 ];
 
 let i = 0;
 let cash = 0;
+let used5050 = false;
 
-let fiftyUsed = false;
-
-// ===== FUNKCJE =====
+// ===== START =====
 function load(){
-    let q = questions[i];
+    let x = q[i];
 
-    document.getElementById("question").innerText = q.q;
+    document.getElementById("questionBox").innerText = x.q;
 
-    document.getElementById("a").innerText = q.a[0];
-    document.getElementById("b").innerText = q.a[1];
-    document.getElementById("c").innerText = q.a[2];
-    document.getElementById("d").innerText = q.a[3];
+    document.getElementById("a").innerText = x.a[0];
+    document.getElementById("b").innerText = x.a[1];
+    document.getElementById("c").innerText = x.a[2];
+    document.getElementById("d").innerText = x.a[3];
 
     document.getElementById("money").innerText = "💵 " + cash + " zł";
 }
 
-function check(ans){
-    let q = questions[i];
-
-    if(ans === q.c){
-        cash = ladder[i];
-
+// ===== ODPOWIEDŹ =====
+function answer(n){
+    if(n === q[i].c){
+        cash = money[i];
         i++;
-
-        if(i === questions.length){
+        if(i >= q.length){
             win();
         } else {
             load();
         }
     } else {
-        document.getElementById("question").innerText = "❌ KONIEC GRY – " + cash + " zł";
+        restart();
     }
 }
 
-// ===== KOŁA RATUNKOWE =====
-function fifty(){
-    if(fiftyUsed) return;
-    fiftyUsed = true;
+// ===== RESTART (po błędzie) =====
+function restart(){
+    document.getElementById("gameover").style.display="flex";
 
-    let q = questions[i];
-    let wrong = [1,2,3].filter(x => x !== q.c);
-
-    document.getElementById("a").innerText = (q.c === 0 || wrong.includes(0)) ? q.a[0] : "";
-    document.getElementById("b").innerText = (q.c === 1 || wrong.includes(1)) ? q.a[1] : "";
-    document.getElementById("c").innerText = (q.c === 2 || wrong.includes(2)) ? q.a[2] : "";
-    document.getElementById("d").innerText = (q.c === 3 || wrong.includes(3)) ? q.a[3] : "";
-}
-
-function friend(){
-    alert("👤 Przyjaciel: wydaje mi się że poprawna odpowiedź to: " + questions[i].a[questions[i].c]);
-}
-
-function audience(){
-    alert("👥 Publiczność: większość głosów na: " + questions[i].a[questions[i].c]);
+    setTimeout(()=>{
+        document.getElementById("gameover").style.display="none";
+        i = 0;
+        cash = 0;
+        load();
+    },2000);
 }
 
 // ===== WYGRANA =====
 function win(){
-    document.getElementById("fireworks").style.display="flex";
-    document.getElementById("fireworks").innerText="🎆 WYGRAŁEŚ 1 000 000 zł 🎆";
+    document.getElementById("questionBox").innerText =
+    "🎉 1 000 000 ZŁ WYGRANE!";
+}
+
+// ===== KOŁA RATUNKOWE =====
+function fifty(){
+    if(used5050) return;
+    used5050 = true;
+
+    let correct = q[i].c;
+    let opts = [0,1,2,3].filter(x => x !== correct);
+    opts = opts.sort(()=>Math.random()-0.5).slice(0,2);
+
+    opts.forEach(x=>{
+        document.getElementById(["a","b","c","d"][x]).innerText = "";
+    });
+}
+
+function friend(){
+    alert("👤 Przyjaciel: myślę że poprawna to → " + q[i].a[q[i].c]);
+}
+
+function audience(){
+    alert("👥 Publiczność: większość wskazuje → " + q[i].a[q[i].c]);
 }
 
 load();
