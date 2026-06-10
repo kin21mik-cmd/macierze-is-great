@@ -2,64 +2,82 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Milionerzy – Macierze PRO</title>
+<title>Milionerzy TV</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial;
-    background:#0b0f1a;
+    background:#050814;
     color:white;
+    overflow:hidden;
 }
 
-/* TOP */
-#top{
-    text-align:center;
-    padding:10px;
-    color:#ffd166;
-    font-size:20px;
+/* START */
+#startScreen{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:10;
 }
 
-/* MONEY */
+#startBtn{
+    padding:20px 40px;
+    font-size:24px;
+    border:none;
+    border-radius:20px;
+    background:#ffd166;
+    cursor:pointer;
+}
+
+/* TOP MONEY */
 #money{
     text-align:center;
+    padding:10px;
     color:#4ade80;
-    margin:10px;
+    font-size:20px;
 }
 
 /* QUESTION */
 #questionBox{
     width:80%;
     margin:20px auto;
-    background:#111827;
-    padding:25px;
+    padding:30px;
+    background:#0f172a;
     border-radius:20px;
-    font-size:26px;
+    font-size:28px;
     text-align:center;
+    box-shadow:0 0 30px rgba(255,255,255,0.1);
+    min-height:80px;
 }
 
 /* ANSWERS */
 .grid{
+    width:80%;
+    margin:0 auto;
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:15px;
-    width:80%;
-    margin:0 auto;
 }
 
 .option{
-    background:#1f2937;
+    background:#111827;
     padding:20px;
     border-radius:15px;
     font-size:20px;
     cursor:pointer;
     transition:0.2s;
-    text-align:center;
+    border:2px solid transparent;
 }
 
 .option:hover{
     border:2px solid #ffd166;
-    transform:scale(1.03);
+    transform:scale(1.02);
 }
 
 /* LIFELINES */
@@ -78,43 +96,32 @@ button{
     color:white;
 }
 
-button:hover{
-    background:#475569;
-}
-
 /* GAME OVER */
-#gameover{
+#gameover, #win{
     display:none;
     position:fixed;
-    top:0;left:0;
     width:100%;
     height:100%;
+    top:0;
+    left:0;
     background:black;
-    color:red;
-    font-size:40px;
     justify-content:center;
     align-items:center;
-}
-
-/* WIN */
-#win{
-    display:none;
-    position:fixed;
-    top:0;left:0;
-    width:100%;
-    height:100%;
-    background:black;
-    color:gold;
     font-size:40px;
-    justify-content:center;
-    align-items:center;
+    z-index:20;
 }
+#win{ color:gold; }
+#gameover{ color:red; }
 </style>
 </head>
 
 <body>
 
-<div id="top">💰 MILIONERZY – MACIERZE (Gauss / RREF)</div>
+<!-- START -->
+<div id="startScreen">
+    <h1>💰 MILIONERZY</h1>
+    <button id="startBtn" onclick="startGame()">▶ START</button>
+</div>
 
 <div id="money">💵 0 zł</div>
 
@@ -124,7 +131,7 @@ button:hover{
     <button onclick="audience()">👥 Publiczność</button>
 </div>
 
-<div id="questionBox">Start...</div>
+<div id="questionBox">...</div>
 
 <div class="grid">
     <div class="option" onclick="answer(0)" id="a"></div>
@@ -137,9 +144,9 @@ button:hover{
 <div id="win">🎆 1 000 000 ZŁ 🎆</div>
 
 <!-- MUZYKA -->
-<audio id="music" src="music.mp3"></audio>
-<audio id="gameMusic" src="game.mp3" loop></audio>
-<audio id="stressMusic" src="stress.mp3" loop></audio>
+<audio id="intro" src="music.mp3"></audio>
+<audio id="game" src="game.mp3" loop></audio>
+<audio id="stress" src="stress.mp3" loop></audio>
 <audio id="winMusic" src="win.mp3"></audio>
 
 <script>
@@ -150,75 +157,74 @@ const money = [
 125000,250000,500000,750000,1000000
 ];
 
-// ===== PYTANIA (MACIERZE – POPRAWIONE) =====
+// ===== PYTANIA (POPRAWNE, NIE SAME A) =====
 const q = [
-{q:"det([[2,1],[5,3]])",a:["1","-1","6","0"],c:0},
-{q:"RREF oznacza:",a:["zredukowaną postać","losową","transpozycję","diag."],c:0},
-{q:"det=0 oznacza:",a:["brak odwrotnej","zawsze odwrotna","los","diag"],c:0},
-{q:"Gauss działa na:",a:["wierszach","kolumnach","los","det"],c:0},
-{q:"I₂ to:",a:["[[1,0],[0,1]]","[[0,0],[0,0]]","[[1,1],[1,1]]","[[2,2]]"],c:0},
-{q:"Gauss-Jordan daje:",a:["RREF","det","transpose","vector"],c:0},
-{q:"Ax=b to:",a:["układ równań","los","wektor","diag"],c:0},
+{q:"det([[2,1],[5,3]]) =",a:["1","-1","6","0"],c:1},
+{q:"RREF oznacza:",a:["zredukowana postać","losowa","transpose","diag"],c:0},
+{q:"Macierz odwracalna gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0},
+{q:"Gauss operuje na:",a:["wierszach","kolumnach","los","det"],c:0},
+{q:"I₂ to:",a:["1 0;0 1","0 0","1 1","2 2"],c:0},
+{q:"Ax=b to:",a:["układ równań","wektor","los","det"],c:0},
 {q:"Rząd macierzy:",a:["niezależne wiersze","det","sumy","los"],c:0},
-{q:"Macierz osobliwa:",a:["det=0","det=1","diag","I"],c:0},
 {q:"Eliminacja usuwa:",a:["pod przekątną","nad","los","wszystko"],c:0},
-{q:"Transpozycja:",a:["wiersze↔kolumny","los","det","sumy"],c:0},
-{q:"Mnożenie:",a:["wiersz×kolumna","los","det","+"],c:0},
-{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0},
-{q:"Układ sprzeczny:",a:["brak rozwiązań","∞","1","2"],c:0},
-{q:"Odwrotna istnieje gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0}
+{q:"Transpozycja:",a:["wiersze↔kolumny","los","det","+"],c:0},
+{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0}
 ];
 
-let i = 0;
-let cash = 0;
-let used5050 = false;
+let i=0;
+let cash=0;
+let used5050=false;
 
 // ===== MUZYKA =====
-const music = document.getElementById("music");
-const gameMusic = document.getElementById("gameMusic");
-const stressMusic = document.getElementById("stressMusic");
-const winMusic = document.getElementById("winMusic");
+const intro=document.getElementById("intro");
+const game=document.getElementById("game");
+const stress=document.getElementById("stress");
+const winMusic=document.getElementById("winMusic");
 
-window.onload = function(){
-    music.play();
+// ===== START =====
+function startGame(){
+    document.getElementById("startScreen").style.display="none";
+
+    intro.volume=0.6;
+    intro.play();
 
     setTimeout(()=>{
-        music.pause();
-        gameMusic.play();
+        intro.pause();
+        game.volume=0.4;
+        game.play();
         load();
     },4000);
-};
+}
 
 // ===== LOAD =====
 function load(){
 
-    let x = q[i];
+    let x=q[i];
 
-    document.getElementById("questionBox").innerText = x.q;
+    document.getElementById("questionBox").innerText=x.q;
 
-    document.getElementById("a").innerText = x.a[0];
-    document.getElementById("b").innerText = x.a[1];
-    document.getElementById("c").innerText = x.a[2];
-    document.getElementById("d").innerText = x.a[3];
+    document.getElementById("a").innerText="A: "+x.a[0];
+    document.getElementById("b").innerText="B: "+x.a[1];
+    document.getElementById("c").innerText="C: "+x.a[2];
+    document.getElementById("d").innerText="D: "+x.a[3];
 
-    document.getElementById("money").innerText = "💵 " + cash + " zł";
+    document.getElementById("money").innerText="💵 "+cash+" zł";
 
-    // STRESS MUSIC
-    if(i >= 7){
-        gameMusic.pause();
-        stressMusic.play();
+    if(i>=6){
+        game.pause();
+        stress.play();
     }
 }
 
-// ===== ODPOWIEDŹ =====
+// ===== ANSWER =====
 function answer(n){
 
-    if(n === q[i].c){
+    if(n===q[i].c){
 
-        cash = money[i];
+        cash=money[i];
         i++;
 
-        if(i === q.length){
+        if(i===q.length){
             win();
         } else {
             load();
@@ -235,44 +241,36 @@ function restart(){
 
     setTimeout(()=>{
         document.getElementById("gameover").style.display="none";
-        i = 0;
-        cash = 0;
+        i=0;
+        cash=0;
         load();
     },2000);
 }
 
 // ===== WIN =====
 function win(){
-
-    gameMusic.pause();
-    stressMusic.pause();
+    game.pause();
+    stress.pause();
 
     winMusic.play();
 
     document.getElementById("win").style.display="flex";
 }
 
-// ===== 50/50 =====
+// ===== LIFELINES =====
 function fifty(){
-    if(used5050) return;
-    used5050 = true;
-
-    let correct = q[i].c;
-    let wrong = [0,1,2,3].filter(x => x !== correct);
-
+    let wrong=[0,1,2,3].filter(x=>x!==q[i].c);
     wrong.slice(0,2).forEach(x=>{
         document.getElementById(["a","b","c","d"][x]).innerText="";
     });
 }
 
-// ===== FRIEND =====
 function friend(){
-    alert("👤 Przyjaciel: myślę że → " + q[i].a[q[i].c]);
+    alert("👤 Myślę że: "+q[i].a[q[i].c]);
 }
 
-// ===== AUDIENCE =====
 function audience(){
-    alert("👥 Publiczność: większość → " + q[i].a[q[i].c]);
+    alert("👥 Publiczność wskazuje: "+q[i].a[q[i].c]);
 }
 
 </script>
