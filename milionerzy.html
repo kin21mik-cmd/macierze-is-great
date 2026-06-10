@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Milionerzy – Macierze TV</title>
+<title>Milionerzy – Macierze PRO</title>
 
 <style>
 body{
@@ -12,27 +12,33 @@ body{
     color:white;
 }
 
-/* GÓRA */
+/* TOP */
 #top{
     text-align:center;
     padding:10px;
-    font-size:20px;
     color:#ffd166;
+    font-size:20px;
 }
 
-/* EKRAN PYTANIA */
+/* MONEY */
+#money{
+    text-align:center;
+    color:#4ade80;
+    margin:10px;
+}
+
+/* QUESTION */
 #questionBox{
     width:80%;
     margin:20px auto;
-    padding:25px;
     background:#111827;
+    padding:25px;
     border-radius:20px;
     font-size:26px;
     text-align:center;
-    box-shadow:0 0 20px rgba(255,255,255,0.1);
 }
 
-/* ODPOWIEDZI */
+/* ANSWERS */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -48,23 +54,15 @@ body{
     font-size:20px;
     cursor:pointer;
     transition:0.2s;
-    border:2px solid transparent;
+    text-align:center;
 }
 
 .option:hover{
     border:2px solid #ffd166;
-    transform:scale(1.02);
+    transform:scale(1.03);
 }
 
-/* DOLNY PANEL */
-#money{
-    text-align:center;
-    margin-top:15px;
-    color:#4ade80;
-    font-size:18px;
-}
-
-/* KOŁA RATUNKOWE */
+/* LIFELINES */
 #lifelines{
     text-align:center;
     margin:10px;
@@ -97,12 +95,26 @@ button:hover{
     justify-content:center;
     align-items:center;
 }
+
+/* WIN */
+#win{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    color:gold;
+    font-size:40px;
+    justify-content:center;
+    align-items:center;
+}
 </style>
 </head>
 
 <body>
 
-<div id="top">💰 MILIONERZY – MACIERZE (Gauss / RREF / det)</div>
+<div id="top">💰 MILIONERZY – MACIERZE (Gauss / RREF)</div>
 
 <div id="money">💵 0 zł</div>
 
@@ -112,7 +124,7 @@ button:hover{
     <button onclick="audience()">👥 Publiczność</button>
 </div>
 
-<div id="questionBox">Ładowanie...</div>
+<div id="questionBox">Start...</div>
 
 <div class="grid">
     <div class="option" onclick="answer(0)" id="a"></div>
@@ -122,119 +134,64 @@ button:hover{
 </div>
 
 <div id="gameover">❌ KONIEC GRY</div>
+<div id="win">🎆 1 000 000 ZŁ 🎆</div>
+
+<!-- MUZYKA -->
+<audio id="music" src="music.mp3"></audio>
+<audio id="gameMusic" src="game.mp3" loop></audio>
+<audio id="stressMusic" src="stress.mp3" loop></audio>
+<audio id="winMusic" src="win.mp3"></audio>
 
 <script>
 
 // ===== DRABINKA =====
 const money = [
-0,100,500,1000,2000,5000,10000,20000,40000,75000,125000,250000,500000,750000,1000000
+0,100,500,1000,2000,5000,10000,20000,40000,75000,
+125000,250000,500000,750000,1000000
 ];
 
-// ===== POPRAWIONE PYTANIA (MATEMATYCZNE) =====
+// ===== PYTANIA (MACIERZE – POPRAWIONE) =====
 const q = [
-{
-q:"Oblicz det: det([[2,1],[5,3]])",
-a:["1","-1","6","0"],
-c:0
-},
-{
-q:"Co oznacza RREF?",
-a:[
-"zredukowana postać schodkowa",
-"losowa macierz",
-"transpozycja",
-"macierz diagonalna"
-],
-c:0
-},
-{
-q:"Kiedy macierz 2×2 jest odwracalna?",
-a:[
-"gdy det ≠ 0",
-"gdy det = 0",
-"zawsze",
-"nigdy"
-],
-c:0
-},
-{
-q:"Operacje Gaussa polegają na:",
-a:[
-"operacjach na wierszach",
-"losowaniu liczb",
-"mnożeniu kolumn",
-"dodawaniu wyznaczników"
-],
-c:0
-},
-{
-q:"Macierz jednostkowa I₂ to:",
-a:[
-"[[1,0],[0,1]]",
-"[[0,0],[0,0]]",
-"[[1,1],[1,1]]",
-"[[2,2],[2,2]]"
-],
-c:0
-},
-{
-q:"Gauss–Jordan prowadzi do:",
-a:[
-"RREF",
-"determinantu",
-"transpozycji",
-"wektora"
-],
-c:0
-},
-{
-q:"Układ równań liniowych zapisujemy jako:",
-a:[
-"Ax = b",
-"A + B = C",
-"A × B = det",
-"x / A = B"
-],
-c:0
-},
-{
-q:"Rząd macierzy to:",
-a:[
-"liczba niezależnych wierszy",
-"determinant",
-"sumy elementów",
-"kolumny losowe"
-],
-c:0
-},
-{
-q:"Macierz osobliwa to taka, która:",
-a:[
-"ma det = 0",
-"ma det = 1",
-"jest diagonalna",
-"jest jednostkowa"
-],
-c:0
-},
-{
-q:"Eliminacja Gaussa usuwa elementy:",
-a:[
-"pod główną przekątną",
-"nad przekątną",
-"losowe",
-"wszystkie"
-],
-c:0
-}
+{q:"det([[2,1],[5,3]])",a:["1","-1","6","0"],c:0},
+{q:"RREF oznacza:",a:["zredukowaną postać","losową","transpozycję","diag."],c:0},
+{q:"det=0 oznacza:",a:["brak odwrotnej","zawsze odwrotna","los","diag"],c:0},
+{q:"Gauss działa na:",a:["wierszach","kolumnach","los","det"],c:0},
+{q:"I₂ to:",a:["[[1,0],[0,1]]","[[0,0],[0,0]]","[[1,1],[1,1]]","[[2,2]]"],c:0},
+{q:"Gauss-Jordan daje:",a:["RREF","det","transpose","vector"],c:0},
+{q:"Ax=b to:",a:["układ równań","los","wektor","diag"],c:0},
+{q:"Rząd macierzy:",a:["niezależne wiersze","det","sumy","los"],c:0},
+{q:"Macierz osobliwa:",a:["det=0","det=1","diag","I"],c:0},
+{q:"Eliminacja usuwa:",a:["pod przekątną","nad","los","wszystko"],c:0},
+{q:"Transpozycja:",a:["wiersze↔kolumny","los","det","sumy"],c:0},
+{q:"Mnożenie:",a:["wiersz×kolumna","los","det","+"],c:0},
+{q:"Macierz zerowa:",a:["same 0","same 1","los","diag"],c:0},
+{q:"Układ sprzeczny:",a:["brak rozwiązań","∞","1","2"],c:0},
+{q:"Odwrotna istnieje gdy:",a:["det≠0","det=0","zawsze","nigdy"],c:0}
 ];
 
 let i = 0;
 let cash = 0;
 let used5050 = false;
 
-// ===== START =====
+// ===== MUZYKA =====
+const music = document.getElementById("music");
+const gameMusic = document.getElementById("gameMusic");
+const stressMusic = document.getElementById("stressMusic");
+const winMusic = document.getElementById("winMusic");
+
+window.onload = function(){
+    music.play();
+
+    setTimeout(()=>{
+        music.pause();
+        gameMusic.play();
+        load();
+    },4000);
+};
+
+// ===== LOAD =====
 function load(){
+
     let x = q[i];
 
     document.getElementById("questionBox").innerText = x.q;
@@ -245,24 +202,34 @@ function load(){
     document.getElementById("d").innerText = x.a[3];
 
     document.getElementById("money").innerText = "💵 " + cash + " zł";
+
+    // STRESS MUSIC
+    if(i >= 7){
+        gameMusic.pause();
+        stressMusic.play();
+    }
 }
 
 // ===== ODPOWIEDŹ =====
 function answer(n){
+
     if(n === q[i].c){
+
         cash = money[i];
         i++;
-        if(i >= q.length){
+
+        if(i === q.length){
             win();
         } else {
             load();
         }
+
     } else {
         restart();
     }
 }
 
-// ===== RESTART (po błędzie) =====
+// ===== RESTART =====
 function restart(){
     document.getElementById("gameover").style.display="flex";
 
@@ -274,35 +241,39 @@ function restart(){
     },2000);
 }
 
-// ===== WYGRANA =====
+// ===== WIN =====
 function win(){
-    document.getElementById("questionBox").innerText =
-    "🎉 1 000 000 ZŁ WYGRANE!";
+
+    gameMusic.pause();
+    stressMusic.pause();
+
+    winMusic.play();
+
+    document.getElementById("win").style.display="flex";
 }
 
-// ===== KOŁA RATUNKOWE =====
+// ===== 50/50 =====
 function fifty(){
     if(used5050) return;
     used5050 = true;
 
     let correct = q[i].c;
-    let opts = [0,1,2,3].filter(x => x !== correct);
-    opts = opts.sort(()=>Math.random()-0.5).slice(0,2);
+    let wrong = [0,1,2,3].filter(x => x !== correct);
 
-    opts.forEach(x=>{
-        document.getElementById(["a","b","c","d"][x]).innerText = "";
+    wrong.slice(0,2).forEach(x=>{
+        document.getElementById(["a","b","c","d"][x]).innerText="";
     });
 }
 
+// ===== FRIEND =====
 function friend(){
-    alert("👤 Przyjaciel: myślę że poprawna to → " + q[i].a[q[i].c]);
+    alert("👤 Przyjaciel: myślę że → " + q[i].a[q[i].c]);
 }
 
+// ===== AUDIENCE =====
 function audience(){
-    alert("👥 Publiczność: większość wskazuje → " + q[i].a[q[i].c]);
+    alert("👥 Publiczność: większość → " + q[i].a[q[i].c]);
 }
-
-load();
 
 </script>
 
