@@ -2,155 +2,368 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Milionerzy – Macierze</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milionerzy - Macierze</title>
 
 <style>
+
 body{
-    background:#000;
+    background: radial-gradient(circle,#0a0a4f,#000);
     color:white;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
     text-align:center;
+    margin:0;
+}
+
+h1{
+    color:gold;
+    margin-top:20px;
 }
 
 .box{
-    margin:50px auto;
-    width:600px;
+    width:700px;
+    max-width:95%;
+    margin:30px auto;
     background:#111;
+    border:3px solid gold;
+    border-radius:20px;
     padding:20px;
-    border-radius:15px;
+    box-shadow:0 0 20px gold;
 }
 
-h2{
+#question{
+    margin-bottom:25px;
     color:#ffd700;
 }
 
 button{
-    display:block;
     width:100%;
     margin:10px 0;
-    padding:12px;
-    font-size:16px;
-    cursor:pointer;
-    background:#222;
+    padding:14px;
+    font-size:18px;
+    background:#1d1d8f;
     color:white;
     border:none;
-    border-radius:8px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.3s;
 }
 
 button:hover{
-    background:#444;
+    background:#3333cc;
 }
 
 .correct{
-    background:green;
+    background:green !important;
 }
 
 .wrong{
-    background:red;
+    background:red !important;
 }
+
+.lifelines{
+    width:700px;
+    max-width:95%;
+    margin:auto;
+}
+
+.lifelines button{
+    width:48%;
+    display:inline-block;
+}
+
+#hint{
+    margin-top:15px;
+    color:gold;
+    font-size:20px;
+    min-height:30px;
+}
+
+#score{
+    color:gold;
+    margin-top:20px;
+}
+
 </style>
 </head>
-
 <body>
 
-<h1>💰 Milionerzy – Macierze</h1>
+<h1>💰 MILIONERZY – MACIERZE 💰</h1>
+
+<audio autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="lifelines">
+    <button id="fifty">🟡 50/50</button>
+    <button id="friend">📞 Telefon do przyjaciela</button>
+</div>
 
 <div class="box">
+
     <h2 id="question"></h2>
+
     <button id="a"></button>
     <button id="b"></button>
     <button id="c"></button>
     <button id="d"></button>
+
+    <p id="hint"></p>
+
 </div>
 
-<h3 id="score">Pytanie: 1</h3>
+<h2 id="score">Pytanie 1 z 10</h2>
 
 <script>
 
 const questions = [
 
 {
-q:"Wyznacznik macierzy |1 2 3; 0 4 5; 1 0 6| wynosi:",
-answers:["22","10","15","12"],
+q:"Wyznacznik macierzy |2 3; 1 4| wynosi:",
+answers:["5","8","2","7"],
 correct:0
 },
 
 {
-q:"Która metoda służy do obliczania wyznacznika 3x3?",
-answers:["Sarrusa","Pitagorasa","Gaussa-Jordana","Newtona"],
+q:"Kto jest uznawany za twórcę teorii macierzy?",
+answers:[
+"Arthur Cayley",
+"Isaac Newton",
+"Carl Gauss",
+"Leonhard Euler"
+],
 correct:0
 },
 
 {
-q:"Wyznacznik macierzy |2 1 0; 3 -1 4; 1 2 1| wynosi:",
-answers:["3","5","1","7"],
+q:"Wyznacznik macierzy |1 2; 3 4| wynosi:",
+answers:[
+"-2",
+"2",
+"10",
+"4"
+],
 correct:0
 },
 
 {
-q:"Jeśli wyznacznik macierzy = 0 to macierz jest:",
-answers:["nieodwracalna","odwracalna","jednostkowa","symetryczna"],
+q:"Jeżeli wyznacznik macierzy wynosi 0, to macierz jest:",
+answers:[
+"nieodwracalna",
+"odwracalna",
+"jednostkowa",
+"symetryczna"
+],
+correct:0
+},
+
+{
+q:"W którym wieku Arthur Cayley rozwijał teorię macierzy?",
+answers:[
+"XIX",
+"XVIII",
+"XX",
+"XVII"
+],
+correct:0
+},
+
+{
+q:"Macierz jednostkowa ma na głównej przekątnej:",
+answers:[
+"same jedynki",
+"same zera",
+"same dwójki",
+"same liczby ujemne"
+],
+correct:0
+},
+
+{
+q:"Wyznacznik macierzy |3 1; 2 5| wynosi:",
+answers:[
+"13",
+"15",
+"7",
+"10"
+],
+correct:0
+},
+
+{
+q:"Jak oznacza się macierz jednostkową?",
+answers:[
+"I",
+"A",
+"M",
+"E"
+],
+correct:0
+},
+
+{
+q:"Wyznacznik macierzy |4 2; 1 3| wynosi:",
+answers:[
+"10",
+"12",
+"8",
+"7"
+],
+correct:0
+},
+
+{
+q:"Która metoda służy do obliczania wyznacznika macierzy 3×3?",
+answers:[
+"Sarrusa",
+"Pitagorasa",
+"Newtona",
+"Euklidesa"
+],
 correct:0
 }
 
 ];
 
 let current = 0;
+let fiftyUsed = false;
+let friendUsed = false;
+
+const buttons = ["a","b","c","d"];
 
 function loadQuestion(){
-    const q = questions[current];
+
+    let q = questions[current];
 
     document.getElementById("question").innerText = q.q;
+
     document.getElementById("a").innerText = "A. " + q.answers[0];
     document.getElementById("b").innerText = "B. " + q.answers[1];
     document.getElementById("c").innerText = "C. " + q.answers[2];
     document.getElementById("d").innerText = "D. " + q.answers[3];
+
+    document.getElementById("hint").innerText = "";
+
+    buttons.forEach(id=>{
+        document.getElementById(id).style.visibility="visible";
+    });
+
+    document.getElementById("score").innerText =
+    "Pytanie " + (current+1) + " z " + questions.length;
 }
 
 function check(answer){
-    const correct = questions[current].correct;
 
-    const buttons = ["a","b","c","d"];
+    let correct = questions[current].correct;
 
-    buttons.forEach((id,i)=>{
-        document.getElementById(id).disabled = true;
+    buttons.forEach((id,index)=>{
 
-        if(i === correct){
+        document.getElementById(id).disabled=true;
+
+        if(index===correct){
             document.getElementById(id).classList.add("correct");
         }
+
     });
 
-    if(answer !== correct){
+    if(answer!==correct){
         document.getElementById(buttons[answer]).classList.add("wrong");
     }
 
     setTimeout(()=>{
+
         current++;
 
-        if(current < questions.length){
+        if(current<questions.length){
+
             resetButtons();
             loadQuestion();
-            document.getElementById("score").innerText = "Pytanie: " + (current+1);
-        } else {
-            document.body.innerHTML = "<h1>🎉 KONIEC GRY!</h1>";
+
+        }else{
+
+            document.body.innerHTML=
+            `
+            <h1 style="color:gold;margin-top:150px;">
+            🎉 GRATULACJE! 🎉
+            <br><br>
+            WYGRAŁEŚ 1 000 000 ZŁ
+            </h1>
+            `;
+
         }
 
-    },1500);
+    },2000);
 }
 
 function resetButtons(){
-    const buttons = ["a","b","c","d"];
-    buttons.forEach(id => {
-        const btn = document.getElementById(id);
-        btn.disabled = false;
-        btn.classList.remove("correct","wrong");
+
+    buttons.forEach(id=>{
+
+        let btn=document.getElementById(id);
+
+        btn.disabled=false;
+        btn.classList.remove("correct");
+        btn.classList.remove("wrong");
+
     });
+
 }
 
-document.getElementById("a").onclick = () => check(0);
-document.getElementById("b").onclick = () => check(1);
-document.getElementById("c").onclick = () => check(2);
-document.getElementById("d").onclick = () => check(3);
+document.getElementById("fifty").onclick=function(){
+
+    if(fiftyUsed) return;
+
+    fiftyUsed=true;
+
+    let correct=questions[current].correct;
+
+    let wrong=[];
+
+    for(let i=0;i<4;i++){
+        if(i!==correct){
+            wrong.push(i);
+        }
+    }
+
+    wrong.sort(()=>Math.random()-0.5);
+
+    document.getElementById(buttons[wrong[0]])
+        .style.visibility="hidden";
+
+    document.getElementById(buttons[wrong[1]])
+        .style.visibility="hidden";
+
+    this.disabled=true;
+}
+
+document.getElementById("friend").onclick=function(){
+
+    if(friendUsed) return;
+
+    friendUsed=true;
+
+    let correct=questions[current].correct;
+
+    let answer;
+
+    if(Math.random()<0.8){
+        answer=["A","B","C","D"][correct];
+    }
+    else{
+        answer=["A","B","C","D"]
+        [Math.floor(Math.random()*4)];
+    }
+
+    document.getElementById("hint").innerText=
+    "📞 Przyjaciel mówi: Myślę, że poprawna odpowiedź to " + answer;
+
+    this.disabled=true;
+}
+
+document.getElementById("a").onclick=()=>check(0);
+document.getElementById("b").onclick=()=>check(1);
+document.getElementById("c").onclick=()=>check(2);
+document.getElementById("d").onclick=()=>check(3);
 
 loadQuestion();
 
