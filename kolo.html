@@ -2,170 +2,177 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎡 Koło Fortuny - Algebra Games</title>
+<title>🎡 Koło Fortuny</title>
 
 <style>
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ffd6e7, #d6f0ff, #fff2c9);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+    margin:0;
+    font-family:Arial;
+    background: linear-gradient(135deg,#ffd6e7,#d6f0ff,#fff2c9);
+    text-align:center;
 }
 
 h1 {
-    font-size: 45px;
-    color: #444;
-    margin-bottom: 10px;
-    z-index: 10;
+    margin-top:20px;
 }
 
-/* Kontener na koło i kurczaki */
-.game-container {
-    position: relative;
-    width: 450px;
-    height: 450px;
-    margin-bottom: 25px;
-    z-index: 10;
-}
-
-/* Koło fortuny */
-.wheel-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
+/* KOŁO */
 canvas {
-    border-radius: 50%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);
+    border-radius:50%;
+    margin-top:20px;
+    transition: transform 4s ease-out;
 }
 
-/* Strzałka wskazująca */
+/* STRZAŁKA */
 .arrow {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 30px solid #444;
-    z-index: 20;
+    border-left:20px solid transparent;
+    border-right:20px solid transparent;
+    border-top:30px solid black;
+    margin:auto;
 }
 
-/* Przyciski i formularze */
-.btn {
-    background-color: #b39ddb; /* Pastelowy fiolet */
-    color: white;
-    border: none;
-    padding: 15px 35px;
-    font-size: 22px;
-    font-weight: bold;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: 0.2s;
-    z-index: 10;
+/* PRZYCISK */
+button {
+    margin-top:20px;
+    padding:15px 30px;
+    font-size:20px;
+    border:none;
+    border-radius:30px;
+    background:#9575cd;
+    color:white;
+    cursor:pointer;
 }
 
-.btn:hover {
-    transform: scale(1.05);
-    background-color: #9575cd;
+button:hover {
+    background:#7e57c2;
 }
 
-.btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-/* Okienko z pytaniem */
+/* OKNO */
 .modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    z-index: 100;
-    width: 380px;
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    padding:20px;
+    border-radius:20px;
 }
 
-.modal h3 {
-    margin-top: 0;
-    color: #444;
-    font-size: 24px;
-}
-
-.modal input {
-    width: 90%;
-    padding: 12px;
-    font-size: 18px;
-    border: 2px solid #ddd;
-    border-radius: 15px;
-    margin-top: 15px;
-    text-align: center;
-    outline: none;
-}
-
-.modal input:focus {
-    border-color: #b39ddb;
-}
-
-.feedback {
-    margin-top: 15px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.correct { color: #2ecc71; }
-.wrong { color: #e74c3c; }
-
-/* Chodzące kurczaczki 🐔 */
-.walking-chicken {
-    position: absolute;
-    font-size: 25px;
-    user-select: none;
-    z-index: 1;
-    animation: walk around linear infinite;
-}
-
-@keyframes walk {
-    0% { transform: translate(0, 0) scaleX(1); }
-    25% { transform: translate(40px, -20px) scaleX(1); }
-    50% { transform: translate(80px, 0) scaleX(-1); }
-    75% { transform: translate(40px, 20px) scaleX(-1); }
-    100% { transform: translate(0, 0) scaleX(1); }
-}
-
-/* Przycisk powrotu */
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #555;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.correct { color:green; }
+.wrong { color:red; }
 </style>
 </head>
-    </body>
-    </html>
+
+<body>
+
+<h1>🎡 KOŁO FORTUNY</h1>
+
+<div class="arrow"></div>
+<canvas id="wheel" width="400" height="400"></canvas>
+
+<br>
+<button onclick="spin()">Zakręć</button>
+
+<div class="modal" id="modal">
+    <h3 id="question"></h3>
+    <input id="answer" placeholder="Twoja odpowiedź">
+    <br><br>
+    <button onclick="check()">Sprawdź</button>
+    <p id="result"></p>
+</div>
+
+<script>
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+
+const fields = ["10 pkt","20 pkt","30 pkt","40 pkt","50 pkt","0","BANKRUT"];
+
+const questions = [
+    {q:"2+2=?", a:"4"},
+    {q:"5x3=?", a:"15"},
+    {q:"10-7=?", a:"3"},
+    {q:"6/2=?", a:"3"}
+];
+
+let currentField = 0;
+let points = 0;
+
+// RYSOWANIE KOŁA
+function drawWheel(){
+    let angle = 2*Math.PI / fields.length;
+
+    for(let i=0;i<fields.length;i++){
+        ctx.beginPath();
+        ctx.moveTo(200,200);
+        ctx.arc(200,200,200,i*angle,(i+1)*angle);
+        ctx.fillStyle = i%2 ? "#ffcc80" : "#81d4fa";
+        ctx.fill();
+
+        ctx.fillStyle = "black";
+        ctx.font="16px Arial";
+        ctx.fillText(fields[i],180+Math.cos(i*angle)*120,200+Math.sin(i*angle)*120);
+    }
+}
+
+drawWheel();
+
+// KRĘCENIE
+function spin(){
+    let deg = Math.floor(Math.random()*3600);
+    canvas.style.transform = "rotate("+deg+"deg)";
+
+    currentField = Math.floor(Math.random()*fields.length);
+
+    setTimeout(()=>{
+        openQuestion();
+    },4000);
+}
+
+// PYTANIE
+function openQuestion(){
+    let q = questions[Math.floor(Math.random()*questions.length)];
+
+    currentQuestion = q;
+
+    document.getElementById("modal").style.display="block";
+    document.getElementById("question").innerText=q.q;
+    document.getElementById("result").innerText="";
+}
+
+// SPRAWDZANIE
+function check(){
+    let user = document.getElementById("answer").value;
+    let res = document.getElementById("result");
+
+    if(user == currentQuestion.a){
+        res.innerText="✅ Dobrze!";
+        res.className="correct";
+
+        let value = fields[currentField];
+
+        if(value==="BANKRUT"){
+            points = 0;
+        } else if(value==="0"){
+            // nic
+        } else {
+            points += parseInt(value);
+        }
+    } else {
+        res.innerText="❌ Źle!";
+        res.className="wrong";
+    }
+
+    setTimeout(()=>{
+        document.getElementById("modal").style.display="none";
+        document.getElementById("answer").value="";
+        alert("Twoje punkty: "+points);
+    },1500);
+}
+</script>
+
+</body>
+</html>
+
