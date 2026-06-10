@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>🎡 Koło Fortuny – Macierze (Gauss-Jordan)</title>
+<title>🎡 Koło Fortuny – Gauss-Jordan</title>
 
 <style>
 body{
@@ -35,14 +35,13 @@ h1{
 }
 
 button{
-    margin-top:20px;
+    margin-top:15px;
     padding:12px 25px;
     font-size:18px;
     border:none;
     border-radius:20px;
     background:#ffb6c1;
     cursor:pointer;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 button:hover{
@@ -52,8 +51,18 @@ button:hover{
 #question{
     margin-top:20px;
     font-size:20px;
-    color:#333;
-    min-height:60px;
+}
+
+#answer{
+    margin-top:10px;
+    font-size:18px;
+    color:#2f4f4f;
+}
+
+#matrixImg{
+    display:none;
+    margin-top:15px;
+    max-width:300px;
 }
 
 .chicken{
@@ -63,9 +72,9 @@ button:hover{
 }
 
 @keyframes float {
-    0% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(10deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 </style>
 </head>
@@ -79,43 +88,47 @@ button:hover{
 
 <br>
 <button onclick="spin()">🎲 Losuj pytanie</button>
+<br>
+<button onclick="showAnswer()">📖 Pokaż odpowiedź</button>
 
 <div id="question">Kliknij, aby wylosować pytanie</div>
+<div id="answer"></div>
+
+<img id="matrixImg">
 
 <script>
-// ===== NOWE PYTANIA =====
+// ===== PYTANIA POPRAWIONE =====
 const tasks = [
-"Podaj warunek istnienia rozwiązania: r(A|b) = r(A)",
-"Ile rozwiązań gdy r(A|b) = r(A) = n?",
-"Ile rozwiązań gdy r(A|b) = r(A) < n?",
-"Co oznacza r(A)? (rząd macierzy)",
-"Co oznacza r(A|b)?",
-"Kiedy układ nie ma rozwiązania? (r(A|b) ≠ r(A))",
-"Jaką metodą rozwiązujemy układy? (Gauss-Jordana)",
-"Do jakiej postaci redukujemy macierz? (RREF)",
-"Co to jest macierz rozszerzona?",
-"Ile parametrów gdy r < n? (n − r)",
-"Rozwiąż: 3x + 2y = 7, 5x − y = 4",
-"Rozwiąż układ 3 równań metodą Gaussa-Jordana",
-"Wyznacz macierz odwrotną metodą Gaussa-Jordana",
-"Na czym polega eliminacja Gaussa-Jordana?",
-"Co oznacza liczba n? (liczba niewiadomych)"
+{q:"Kiedy układ równań ma rozwiązanie?", a:"gdy r(A|b) = r(A)"},
+{q:"Ile rozwiązań gdy r(A|b) = r(A) = n?", a:"jedno rozwiązanie"},
+{q:"Ile rozwiązań gdy r(A|b) = r(A) < n?", a:"nieskończenie wiele"},
+{q:"Na czym polega metoda Gaussa-Jordana?", a:"sprowadzamy macierz do postaci RREF zerując elementy nad i pod pivotami"},
+{q:"Co oznacza r(A)?", a:"rząd macierzy"},
+{q:"Co oznacza r(A|b)?", a:"rząd macierzy z wynikami"},
+{q:"Kiedy układ nie ma rozwiązania?", a:"gdy r(A|b) ≠ r(A)"},
+{q:"Co robimy z macierzą w metodzie Gaussa-Jordana?", a:"upraszczamy ją aż dostaniemy postać schodkową"},
+{q:"Po co stosujemy metodę Gaussa-Jordana?", a:"aby znaleźć wartości niewiadomych x, y, z"},
+
+// ✅ ZADANIE Z OBRAZKIEM
+{
+ q:"Rozwiąż układ (3x3) z obrazka metodą Gaussa-Jordana",
+ a:"doprowadź macierz do RREF i odczytaj wartości x, y, z",
+ img:"macierz.png"
+}
 ];
 
 const colors = [
 "#ffadad","#ffd6a5","#fdffb6","#caffbf",
-"#9bf6ff","#a0c4ff","#ffc6ff","#d0bdf4",
-"#ffd3b6","#c2f0c2","#87cefa","#f7a8b8",
-"#fce38a","#95e1d3","#f38181"
+"#9bf6ff","#a0c4ff","#ffc6ff","#d0bdf4"
 ];
 
-// ===== RYSOWANIE KOŁA =====
+// ===== KOŁO =====
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
-const size = canvas.width;
-const radius = size/2;
+const radius = canvas.width/2;
 
-let angle = 0;
+let currentRotation = 0;
+let currentIndex = null;
 
 function drawWheel(){
     const step = (2*Math.PI)/tasks.length;
@@ -124,40 +137,56 @@ function drawWheel(){
         ctx.beginPath();
         ctx.moveTo(radius,radius);
         ctx.fillStyle = colors[i % colors.length];
-        ctx.arc(radius,radius,radius,i*step+angle,(i+1)*step+angle);
+        ctx.arc(radius,radius,radius,i*step,(i+1)*step);
         ctx.fill();
 
         ctx.save();
         ctx.translate(radius,radius);
-        ctx.rotate(i*step+step/2+angle);
+        ctx.rotate(i*step+step/2);
         ctx.textAlign="right";
         ctx.fillStyle="#333";
-        ctx.font="14px Arial";
         ctx.fillText(i+1, radius-10, 5);
         ctx.restore();
     }
 }
 
-function render(){
-    ctx.clearRect(0,0,size,size);
-    drawWheel();
-}
+drawWheel();
 
 // ===== LOSOWANIE =====
 function spin(){
-    const index = Math.floor(Math.random()*tasks.length);
+    currentIndex = Math.floor(Math.random()*tasks.length);
 
-    const spinAngle = 360*5 + (index * (360/tasks.length));
-    canvas.style.transform = `rotate(${spinAngle}deg)`;
+    const sliceAngle = 360 / tasks.length;
+    const extraSpins = 360 * 5;
+    const randomOffset = Math.random() * sliceAngle;
+
+    currentRotation += extraSpins + currentIndex*sliceAngle + randomOffset;
+
+    canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+    document.getElementById("answer").innerText = "";
+    document.getElementById("matrixImg").style.display = "none";
 
     setTimeout(()=>{
-        document.getElementById("question").innerText = tasks[index];
+        document.getElementById("question").innerText = tasks[currentIndex].q;
+
+        if(tasks[currentIndex].img){
+            const img = document.getElementById("matrixImg");
+            img.src = tasks[currentIndex].img;
+            img.style.display = "block";
+        }
     },5000);
 }
 
-render();
+// ===== ODPOWIEDŹ =====
+function showAnswer(){
+    if(currentIndex !== null){
+        document.getElementById("answer").innerText =
+        "✅ " + tasks[currentIndex].a;
+    }
+}
 
-// ===== KURCZAKI =====
+// ===== KURCZAKI 🐥 =====
 function createChick(){
     const chick = document.createElement("div");
     chick.className = "chicken";
@@ -165,15 +194,15 @@ function createChick(){
 
     chick.style.left = Math.random()*window.innerWidth + "px";
     chick.style.top = Math.random()*window.innerHeight + "px";
-    chick.style.animationDuration = (3+Math.random()*3)+"s";
 
     document.body.appendChild(chick);
 }
 
-for(let i=0;i<15;i++){
+for(let i=0;i<12;i++){
     createChick();
 }
 </script>
 
 </body>
 </html>
+
