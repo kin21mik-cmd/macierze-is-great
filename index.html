@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Algebra Games</title>
+<title>🎓 Algebra Games</title>
 
 <style>
 
@@ -15,13 +15,18 @@ body{
     text-align:center;
 }
 
-/* Pływające symbole */
+/* Symbole matematyczne */
 
 .symbol{
     position:absolute;
     color:white;
-    font-size:40px;
-    opacity:0.5;
+    font-size:70px;
+    font-weight:bold;
+    opacity:0.9;
+    text-shadow:
+        0 0 10px white,
+        0 0 20px white,
+        0 0 40px white;
     animation:float 15s linear infinite;
     user-select:none;
 }
@@ -33,6 +38,14 @@ body{
     to{
         transform:translateY(-120px) rotate(360deg);
     }
+}
+
+/* Kurki 🐔 */
+
+.chicken{
+    font-size:40px;
+    opacity:0.95;
+    filter:drop-shadow(0 0 10px white);
 }
 
 h1{
@@ -76,6 +89,8 @@ h1{
     color:white;
 }
 
+/* Kolory */
+
 .quiz{
     background:#ff8dc7;
 }
@@ -93,7 +108,7 @@ h1{
 
 <body>
 
-<!-- Pływające symbole -->
+<!-- Matematyka -->
 
 <div class="symbol" style="left:5%; animation-duration:12s;">+</div>
 <div class="symbol" style="left:12%; animation-duration:18s;">−</div>
@@ -108,23 +123,30 @@ h1{
 <div class="symbol" style="left:84%; animation-duration:18s;">det(A)</div>
 <div class="symbol" style="left:92%; animation-duration:15s;">f'(x)</div>
 
+<!-- Kurki dla prowadzącej 🐔 -->
+
+<div class="symbol chicken" style="left:8%; animation-duration:25s;">🐔</div>
+<div class="symbol chicken" style="left:30%; animation-duration:30s;">🐔</div>
+<div class="symbol chicken" style="left:55%; animation-duration:27s;">🐔</div>
+<div class="symbol chicken" style="left:80%; animation-duration:33s;">🐔</div>
+
 <h1>🎓 Algebra Games</h1>
 
 <div class="container">
 
 <div class="card quiz" onclick="openPage('quiz.html')">
-<div class="icon">🎯</div>
-<div class="title">Quiz</div>
+    <div class="icon">🎯</div>
+    <div class="title">Quiz</div>
 </div>
 
 <div class="card million" onclick="openPage('milionerzy.html')">
-<div class="icon">💰</div>
-<div class="title">Milionerzy</div>
+    <div class="icon">💰</div>
+    <div class="title">Milionerzy</div>
 </div>
 
 <div class="card wheel" onclick="openPage('kolo.html')">
-<div class="icon">🎡</div>
-<div class="title">Koło Fortuny</div>
+    <div class="icon">🎡</div>
+    <div class="title">Koło Fortuny</div>
 </div>
 
 </div>
