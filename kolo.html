@@ -2,177 +2,28 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>🎡 Koło Fortuny</title>
+<title>🎡 Koło Fortuny – Macierze</title>
 
 <style>
-body {
+body{
     margin:0;
     font-family:Arial;
-    background: linear-gradient(135deg,#ffd6e7,#d6f0ff,#fff2c9);
+    background:linear-gradient(135deg,#ffd6e7,#d6f0ff,#fff2c9);
     text-align:center;
+    overflow:hidden;
 }
 
-h1 {
+h1{margin-top:20px;}
+
+canvas{
     margin-top:20px;
-}
-
-/* KOŁO */
-canvas {
     border-radius:50%;
-    margin-top:20px;
     transition: transform 4s ease-out;
 }
 
-/* STRZAŁKA */
-.arrow {
-    width: 0;
-    height: 0;
+.arrow{
+    width:0;height:0;
     border-left:20px solid transparent;
     border-right:20px solid transparent;
-    border-top:30px solid black;
-    margin:auto;
-}
 
-/* PRZYCISK */
-button {
-    margin-top:20px;
-    padding:15px 30px;
-    font-size:20px;
-    border:none;
-    border-radius:30px;
-    background:#9575cd;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover {
-    background:#7e57c2;
-}
-
-/* OKNO */
-.modal {
-    display:none;
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:white;
-    padding:20px;
-    border-radius:20px;
-}
-
-.correct { color:green; }
-.wrong { color:red; }
-</style>
-</head>
-
-<body>
-
-<h1>🎡 KOŁO FORTUNY</h1>
-
-<div class="arrow"></div>
-<canvas id="wheel" width="400" height="400"></canvas>
-
-<br>
-<button onclick="spin()">Zakręć</button>
-
-<div class="modal" id="modal">
-    <h3 id="question"></h3>
-    <input id="answer" placeholder="Twoja odpowiedź">
-    <br><br>
-    <button onclick="check()">Sprawdź</button>
-    <p id="result"></p>
-</div>
-
-<script>
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
-
-const fields = ["10 pkt","20 pkt","30 pkt","40 pkt","50 pkt","0","BANKRUT"];
-
-const questions = [
-    {q:"2+2=?", a:"4"},
-    {q:"5x3=?", a:"15"},
-    {q:"10-7=?", a:"3"},
-    {q:"6/2=?", a:"3"}
-];
-
-let currentField = 0;
-let points = 0;
-
-// RYSOWANIE KOŁA
-function drawWheel(){
-    let angle = 2*Math.PI / fields.length;
-
-    for(let i=0;i<fields.length;i++){
-        ctx.beginPath();
-        ctx.moveTo(200,200);
-        ctx.arc(200,200,200,i*angle,(i+1)*angle);
-        ctx.fillStyle = i%2 ? "#ffcc80" : "#81d4fa";
-        ctx.fill();
-
-        ctx.fillStyle = "black";
-        ctx.font="16px Arial";
-        ctx.fillText(fields[i],180+Math.cos(i*angle)*120,200+Math.sin(i*angle)*120);
-    }
-}
-
-drawWheel();
-
-// KRĘCENIE
-function spin(){
-    let deg = Math.floor(Math.random()*3600);
-    canvas.style.transform = "rotate("+deg+"deg)";
-
-    currentField = Math.floor(Math.random()*fields.length);
-
-    setTimeout(()=>{
-        openQuestion();
-    },4000);
-}
-
-// PYTANIE
-function openQuestion(){
-    let q = questions[Math.floor(Math.random()*questions.length)];
-
-    currentQuestion = q;
-
-    document.getElementById("modal").style.display="block";
-    document.getElementById("question").innerText=q.q;
-    document.getElementById("result").innerText="";
-}
-
-// SPRAWDZANIE
-function check(){
-    let user = document.getElementById("answer").value;
-    let res = document.getElementById("result");
-
-    if(user == currentQuestion.a){
-        res.innerText="✅ Dobrze!";
-        res.className="correct";
-
-        let value = fields[currentField];
-
-        if(value==="BANKRUT"){
-            points = 0;
-        } else if(value==="0"){
-            // nic
-        } else {
-            points += parseInt(value);
-        }
-    } else {
-        res.innerText="❌ Źle!";
-        res.className="wrong";
-    }
-
-    setTimeout(()=>{
-        document.getElementById("modal").style.display="none";
-        document.getElementById("answer").value="";
-        alert("Twoje punkty: "+points);
-    },1500);
-}
-</script>
-
-</body>
-</html>
 
