@@ -1,87 +1,222 @@
-const q = [
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Milionerzy – Macierze</title>
+
+<style>
+body{
+    background:#0b1a40;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.box{
+    margin:40px auto;
+    width:600px;
+    background:#112;
+    padding:20px;
+    border-radius:15px;
+}
+
+h1{color:gold;}
+
+button{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:12px;
+    font-size:16px;
+    cursor:pointer;
+    background:#1a2a6c;
+    color:white;
+    border:none;
+    border-radius:8px;
+}
+
+button:hover{
+    background:#2b3f9f;
+}
+
+.correct{background:green;}
+.wrong{background:red;}
+
+.lifelines{
+    margin:20px;
+}
+
+.lifelines button{
+    width:180px;
+    display:inline-block;
+    margin:10px;
+    background:orange;
+}
+
+.money{
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💰 Milionerzy – Macierze</h1>
+
+<div class="lifelines">
+<button onclick="fifty()">50/50</button>
+<button onclick="friend()">Telefon do przyjaciela</button>
+</div>
+
+<div class="box">
+<h2 id="question"></h2>
+<button id="a"></button>
+<button id="b"></button>
+<button id="c"></button>
+<button id="d"></button>
+</div>
+
+<h3 class="money" id="money">Kwota: 100 zł</h3>
+
+<script>
+
+const moneyLevels = [
+"100 zł","200 zł","500 zł","1000 zł",
+"2000 zł","5000 zł","10000 zł","50000 zł",
+"100000 zł","500000 zł","1000000 zł"
+];
+
+const questions = [
 
 {
-q:"det([[2,1],[5,3]]) =",
-a:["-1","1","6","0"],
-c:1 // B
+q:"Ile wynosi det |1 2 3; 0 4 5; 1 0 6| ?",
+answers:["22","12","10","24"],
+correct:0
 },
 
 {
-q:"Macierz odwracalna istnieje gdy:",
-a:["det=0","det≠0","zawsze","nigdy"],
-c:1 // B
+q:"Która metoda służy do obliczania wyznacznika 3×3?",
+answers:["Sarrusa","Gaussa","Newtona","Eulera"],
+correct:0
 },
 
 {
-q:"RREF oznacza:",
-a:["transpozycję",
-   "macierz diagonalną",
-   "zredukowaną postać schodkową",
-   "rozkład LU"],
-c:2 // C
+q:"Metoda Gaussa polega na:",
+answers:[
+"sprowadzaniu macierzy do postaci schodkowej",
+"liczeniu wyznacznika",
+"mnożeniu macierzy",
+"transpozycji"
+],
+correct:0
 },
 
 {
-q:"Macierz jednostkowa I₂ to:",
-a:["0 0;0 0",
-   "1 1;1 1",
-   "2 0;0 2",
-   "1 0;0 1"],
-c:3 // D
+q:"Układ ma nieskończenie wiele rozwiązań gdy:",
+answers:[
+"rząd macierzy = rząd macierzy rozszerzonej < liczba niewiadomych",
+"wyznacznik = 0",
+"wyznacznik ≠ 0",
+"rząd = liczba równań"
+],
+correct:0
 },
 
 {
-q:"Która operacja jest dozwolona w metodzie Gaussa?",
-a:["dodanie wielokrotności jednego wiersza do drugiego",
-   "zamiana kolumn miejscami bez ograniczeń",
-   "usuwanie wiersza",
-   "usuwanie kolumny"],
-c:0 // A
+q:"Twierdzenie Kroneckera-Capellego dotyczy:",
+answers:[
+"liczby rozwiązań układu równań",
+"wyznaczników",
+"transpozycji",
+"macierzy jednostkowej"
+],
+correct:0
 },
 
 {
-q:"Rząd macierzy oznacza:",
-a:["liczbę kolumn",
-   "liczbę niezależnych liniowo wierszy lub kolumn",
-   "sumę elementów przekątnej",
-   "wyznacznik"],
-c:1 // B
-},
-
-{
-q:"Jeżeli po eliminacji otrzymamy wiersz [0 0 0 | 5], to układ jest:",
-a:["oznaczony",
-   "nieoznaczony",
-   "sprzeczny",
-   "jednorodny"],
-c:2 // C
-},
-
-{
-q:"Transpozycja macierzy polega na:",
-a:["odwróceniu macierzy",
-   "pomnożeniu przez -1",
-   "zamianie wierszy z kolumnami",
-   "obliczeniu wyznacznika"],
-c:2 // C
-},
-
-{
-q:"Wyznacznik macierzy [[1,2],[3,4]] wynosi:",
-a:["2",
-   "10",
-   "-2",
-   "1"],
-c:2 // C
-},
-
-{
-q:"Macierz zerowa to macierz:",
-a:["o wyznaczniku 1",
-   "z samymi zerami",
-   "jednostkowa",
-   "trójkątna"],
-c:1 // B
+q:"Jeśli det macierzy ≠ 0 to:",
+answers:[
+"macierz jest odwracalna",
+"macierz nie istnieje",
+"macierz ma nieskończenie rozwiązań",
+"nie ma rozwiązań"
+],
+correct:0
 }
 
 ];
+
+let current = 0;
+
+function load(){
+    const q = questions[current];
+
+    document.getElementById("question").innerText = q.q;
+
+    document.getElementById("a").innerText = "A. "+q.answers[0];
+    document.getElementById("b").innerText = "B. "+q.answers[1];
+    document.getElementById("c").innerText = "C. "+q.answers[2];
+    document.getElementById("d").innerText = "D. "+q.answers[3];
+
+    document.getElementById("money").innerText =
+    "Kwota: " + moneyLevels[current];
+}
+
+function check(i){
+    const correct = questions[current].correct;
+    const btns = ["a","b","c","d"];
+
+    btns.forEach((id,index)=>{
+        const b = document.getElementById(id);
+        b.disabled = true;
+
+        if(index===correct) b.classList.add("correct");
+    });
+
+    if(i!==correct){
+        document.getElementById(btns[i]).classList.add("wrong");
+    }
+
+    setTimeout(()=>{
+        if(i===correct){
+            current++;
+            if(current < questions.length){
+                reset();
+                load();
+            }else{
+                document.body.innerHTML="<h1>🎉 WYGRAŁEŚ MILION! 💰</h1>";
+            }
+        }else{
+            document.body.innerHTML="<h1>❌ KONIEC GRY</h1>";
+        }
+    },1500);
+}
+
+function reset(){
+    ["a","b","c","d"].forEach(id=>{
+        const b=document.getElementById(id);
+        b.disabled=false;
+        b.classList="";
+    });
+}
+
+// ✅ 50/50
+function fifty(){
+    const correct = questions[current].correct;
+    let removed = 0;
+
+    ["a","b","c","d"].forEach((id,index)=>{
+        if(index !== correct && removed < 2){
+            document.getElementById(id).style.visibility="hidden";
+            removed++;
+        }
+    });
+}
+
+// ✅ telefon do przyjaciela
+function friend(){
+    const correct = questions[current].correct;
+    alert("Przyjaciel mówi: myślę że odpowiedź to " + ["A","B","C","D"][correct]);
+}
+
+document.getElementById("a").onclick=()=>check(0);
