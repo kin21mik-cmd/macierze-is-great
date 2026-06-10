@@ -25,9 +25,9 @@ h1{
     transition: transform 5s cubic-bezier(0.1,0.8,0.2,1);
 }
 
+/* ✅ STRZAŁKA */
 .arrow {
- 
-width: 0;
+    width: 0;
     height: 0;
     margin: 0 auto;
     border-left: 20px solid transparent;
@@ -35,20 +35,45 @@ width: 0;
     border-top: 30px solid #ff6b81;
 }
 
-}
-
+/* ✅ NOWE PRZYCISKI */
 button{
-    margin-top:15px;
-    padding:12px 25px;
-    font-size:18px;
+    margin-top:20px;
+    padding:15px 35px;
+    font-size:20px;
+    font-weight:bold;
     border:none;
-    border-radius:20px;
-    background:#ffb6c1;
+    border-radius:30px;
     cursor:pointer;
+    background: linear-gradient(135deg,#ff6b81,#ffb6c1);
+    color:white;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
 }
 
 button:hover{
-    background:#ff9aa2;
+    transform: scale(1.1);
+    background: linear-gradient(135deg,#ff4d6d,#ff8fa3);
+}
+
+button:active{
+    transform: scale(0.95);
+}
+
+/* różne kolory */
+.spin{
+    background: linear-gradient(135deg,#36d1dc,#5b86e5);
+}
+.spin:hover{
+    background: linear-gradient(135deg,#2bc0e4,#3a7bd5);
+}
+
+.answerBtn{
+    background: linear-gradient(135deg,#f7971e,#ffd200);
+    color:#333;
+}
+.answerBtn:hover{
+    background: linear-gradient(135deg,#f5af19,#f12711);
+    color:white;
 }
 
 #question{
@@ -90,9 +115,9 @@ button:hover{
 <canvas id="wheel" width="350" height="350"></canvas>
 
 <br>
-<button onclick="spin()">🎲 Losuj pytanie</button>
+<button class="spin" onclick="spin()">🎲 Losuj pytanie</button>
 <br>
-<button onclick="showAnswer()">📖 Pokaż odpowiedź</button>
+<button class="answerBtn" onclick="showAnswer()">📖 Pokaż odpowiedź</button>
 
 <div id="question">Kliknij, aby wylosować pytanie</div>
 <div id="answer"></div>
@@ -100,19 +125,18 @@ button:hover{
 <img id="matrixImg">
 
 <script>
-// ===== PYTANIA POPRAWIONE =====
+// ===== PYTANIA =====
 const tasks = [
 {q:"Kiedy układ równań ma rozwiązanie?", a:"gdy r(A|b) = r(A)"},
 {q:"Ile rozwiązań gdy r(A|b) = r(A) = n?", a:"jedno rozwiązanie"},
 {q:"Ile rozwiązań gdy r(A|b) = r(A) < n?", a:"nieskończenie wiele"},
-{q:"Na czym polega metoda Gaussa-Jordana?", a:"sprowadzamy macierz do postaci RREF zerując elementy nad i pod pivotami"},
+{q:"Na czym polega metoda Gaussa-Jordana?", a:"sprowadzamy macierz do RREF zerując elementy nad i pod pivotami"},
 {q:"Co oznacza r(A)?", a:"rząd macierzy"},
 {q:"Co oznacza r(A|b)?", a:"rząd macierzy z wynikami"},
 {q:"Kiedy układ nie ma rozwiązania?", a:"gdy r(A|b) ≠ r(A)"},
 {q:"Co robimy z macierzą w metodzie Gaussa-Jordana?", a:"upraszczamy ją aż dostaniemy postać schodkową"},
 {q:"Po co stosujemy metodę Gaussa-Jordana?", a:"aby znaleźć wartości niewiadomych x, y, z"},
 
-// ✅ ZADANIE Z OBRAZKIEM
 {
  q:"Rozwiąż układ (3x3) z obrazka metodą Gaussa-Jordana",
  a:"doprowadź macierz do RREF i odczytaj wartości x, y, z",
@@ -157,8 +181,7 @@ drawWheel();
 
 // ===== LOSOWANIE =====
 function spin(){
-   
-  currentIndex = Math.floor(Math.random()*tasks.length);
+    currentIndex = Math.floor(Math.random()*tasks.length);
 
     const sliceAngle = 360 / tasks.length;
     const extraSpins = 360 * 5;
@@ -168,8 +191,7 @@ function spin(){
 
     canvas.style.transform = `rotate(${currentRotation}deg)`;
 
-    // 🔥 NOWE: czyszczenie od razu
-    document.getElementById("question").innerText = "Losowanie...";
+    document.getElementById("question").innerText = "🎡 Losowanie...";
     document.getElementById("answer").innerText = "";
     document.getElementById("matrixImg").style.display = "none";
 
@@ -183,8 +205,6 @@ function spin(){
         }
     },5000);
 }
-``
-
 
 // ===== ODPOWIEDŹ =====
 function showAnswer(){
