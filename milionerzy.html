@@ -6,8 +6,7 @@
 <title>Milionerzy - Macierze</title>
 
 <style>
-
-body{
+body {
     background: radial-gradient(circle,#0a0a4f,#000);
     color:white;
     font-family:Arial,sans-serif;
@@ -15,12 +14,12 @@ body{
     margin:0;
 }
 
-h1{
+h1 {
     color:gold;
     margin-top:20px;
 }
 
-.box{
+.box {
     width:700px;
     max-width:95%;
     margin:30px auto;
@@ -31,12 +30,12 @@ h1{
     box-shadow:0 0 20px gold;
 }
 
-#question{
+#question {
     margin-bottom:25px;
     color:#ffd700;
 }
 
-button{
+button {
     width:100%;
     margin:10px 0;
     padding:14px;
@@ -49,48 +48,65 @@ button{
     transition:0.3s;
 }
 
-button:hover{
+button:hover {
     background:#3333cc;
 }
 
-.correct{
+.correct {
     background:green !important;
 }
 
-.wrong{
+.wrong {
     background:red !important;
 }
 
-.lifelines{
+.lifelines {
     width:700px;
     max-width:95%;
     margin:auto;
 }
 
-.lifelines button{
+.lifelines button {
     width:48%;
     display:inline-block;
 }
 
-#hint{
+#hint {
     margin-top:15px;
     color:gold;
     font-size:20px;
     min-height:30px;
 }
 
-#score{
+#score {
     color:gold;
     margin-top:20px;
 }
 
+/* Przycisk powrotu do menu głównego */
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 <body>
 
+<a href="index.html" class="back-btn">⬅ Menu</a>
+
 <h1>💰 MILIONERZY – MACIERZE 💰</h1>
 
-<audio autoplay loop>
+<audio id="bgMusic" autoplay loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
@@ -99,8 +115,7 @@ button:hover{
     <button id="friend">📞 Telefon do przyjaciela</button>
 </div>
 
-<div class="box">
-
+<div class="box" id="gameBox">
     <h2 id="question"></h2>
 
     <button id="a"></button>
@@ -109,120 +124,32 @@ button:hover{
     <button id="d"></button>
 
     <p id="hint"></p>
-
 </div>
 
-<h2 id="score">Pytanie 1 z 10</h2>
+<h2 id="score">Gwarantowana stawka: 0 zł</h2>
 
 <script>
+// Definicje stawek dla każdego z 10 pytań
+const prizes = ["500 zł", "2 000 zł", "5 000 zł", "10 000 zł", "20 000 zł", "40 000 zł", "75 000 zł", "125 000 zł", "500 000 zł", "1 000 000 zł"];
 
-const questions = [
-
-{
-q:"Wyznacznik macierzy |2 3; 1 4| wynosi:",
-answers:["5","8","2","7"],
-correct:0
-},
-
-{
-q:"Kto jest uznawany za twórcę teorii macierzy?",
-answers:[
-"Arthur Cayley",
-"Isaac Newton",
-"Carl Gauss",
-"Leonhard Euler"
-],
-correct:0
-},
-
-{
-q:"Wyznacznik macierzy |1 2; 3 4| wynosi:",
-answers:[
-"-2",
-"2",
-"10",
-"4"
-],
-correct:0
-},
-
-{
-q:"Jeżeli wyznacznik macierzy wynosi 0, to macierz jest:",
-answers:[
-"nieodwracalna",
-"odwracalna",
-"jednostkowa",
-"symetryczna"
-],
-correct:0
-},
-
-{
-q:"W którym wieku Arthur Cayley rozwijał teorię macierzy?",
-answers:[
-"XIX",
-"XVIII",
-"XX",
-"XVII"
-],
-correct:0
-},
-
-{
-q:"Macierz jednostkowa ma na głównej przekątnej:",
-answers:[
-"same jedynki",
-"same zera",
-"same dwójki",
-"same liczby ujemne"
-],
-correct:0
-},
-
-{
-q:"Wyznacznik macierzy |3 1; 2 5| wynosi:",
-answers:[
-"13",
-"15",
-"7",
-"10"
-],
-correct:0
-},
-
-{
-q:"Jak oznacza się macierz jednostkową?",
-answers:[
-"I",
-"A",
-"M",
-"E"
-],
-correct:0
-},
-
-{
-q:"Wyznacznik macierzy |4 2; 1 3| wynosi:",
-answers:[
-"10",
-"12",
-"8",
-"7"
-],
-correct:0
-},
-
-{
-q:"Która metoda służy do obliczania wyznacznika macierzy 3×3?",
-answers:[
-"Sarrusa",
-"Pitagorasa",
-"Newtona",
-"Euklidesa"
-],
-correct:0
+// Prognoza gwarantowana w zależności od etapu gry (progi klasyczne: pytanie 2 i 7)
+function getGuaranteedMoney(questionIndex) {
+    if (questionIndex >= 6) return "40 000 zł"; // Po 7 pytaniu (indeks 6) gwarantowane jest 40 000 zł
+    if (questionIndex >= 1) return "2 000 zł";  // Po 2 pytaniu (indeks 1) gwarantowane jest 2 000 zł
+    return "0 zł";
 }
 
+const questions = [
+    { q:"Wyznacznik macierzy |2 3; 1 4| wynosi:", answers:["5","8","2","7"], correct:0 },
+    { q:"Kto jest uznawany za twórcę teorii macierzy?", answers:["Arthur Cayley","Isaac Newton","Carl Gauss","Leonhard Euler"], correct:0 },
+    { q:"Wyznacznik macierzy |1 2; 3 4| wynosi:", answers:["-2","2","10","4"], correct:0 },
+    { q:"Jeżeli wyznacznik macierzy wynosi 0, to macierz jest:", answers:["nieodwracalna","odwracalna","jednostkowa","symetryczna"], correct:0 },
+    { q:"W którym wieku Arthur Cayley rozwijał teorię macierzy?", answers:["XIX","XVIII","XX","XVII"], correct:0 },
+    { q:"Macierz jednostkowa ma na głównej przekątnej:", answers:["same jedynki","same zera","same dwójki","same liczby ujemne"], correct:0 },
+    { q:"Wyznacznik macierzy |3 1; 2 5| wynosi:", answers:["13","15","7","10"], correct:0 },
+    { q:"Jak oznacza się macierz jednostkową?", answers:["I","A","M","E"], correct:0 },
+    { q:"Wyznacznik macierzy |4 2; 1 3| wynosi:", answers:["10","12","8","7"], correct:0 },
+    { q:"Która metoda służy do obliczania wyznacznika macierzy 3×3?", answers:["Sarrusa","Pitagorasa","Newtona","Euklidesa"], correct:0 }
 ];
 
 let current = 0;
@@ -232,10 +159,9 @@ let friendUsed = false;
 const buttons = ["a","b","c","d"];
 
 function loadQuestion(){
-
     let q = questions[current];
 
-    document.getElementById("question").innerText = q.q;
+    document.getElementById("question").innerText = `Pytanie o ${prizes[current]}:\n\n${q.q}`;
 
     document.getElementById("a").innerText = "A. " + q.answers[0];
     document.getElementById("b").innerText = "B. " + q.answers[1];
@@ -245,78 +171,66 @@ function loadQuestion(){
     document.getElementById("hint").innerText = "";
 
     buttons.forEach(id=>{
-        document.getElementById(id).style.visibility="visible";
+        let btn = document.getElementById(id);
+        btn.style.visibility="visible";
+        btn.disabled = false;
+        btn.classList.remove("correct", "wrong");
     });
 
-    document.getElementById("score").innerText =
-    "Pytanie " + (current+1) + " z " + questions.length;
+    document.getElementById("score").innerText = "Suma gwarantowana: " + getGuaranteedMoney(current);
 }
 
 function check(answer){
-
     let correct = questions[current].correct;
 
+    // Blokowanie przycisków i podświetlenie poprawnej odpowiedzi
     buttons.forEach((id,index)=>{
-
         document.getElementById(id).disabled=true;
-
         if(index===correct){
             document.getElementById(id).classList.add("correct");
         }
-
     });
 
-    if(answer!==correct){
+    // Sprawdzanie czy odpowiedź gracza była dobra
+    if(answer === correct){
+        // POPRAWNA ODPOWIEDŹ
+        setTimeout(()=>{
+            current++;
+            if(current < questions.length){
+                loadQuestion();
+            } else {
+                // Wygranie miliona!
+                document.getElementById("gameBox").innerHTML= `
+                    <h1 style="color:gold; font-size: 35px;">🎉 GRATULACJE! 🎉</h1>
+                    <p style="font-size: 24px;">Odpowiedziałeś poprawnie na wszystkie pytania!</p>
+                    <h2 style="color:gold; font-size: 40px;">WYGRAŁEŚ 1 000 000 ZŁ!</h2>
+                    <button onclick="location.reload()" style="width: auto; padding: 15px 30px; margin-top: 20px;">Zagraj jeszcze raz</button>
+                `;
+            }
+        }, 2000);
+    } else {
+        // BŁĘDNA ODPOWIEDŹ -> KONIEC GRY
         document.getElementById(buttons[answer]).classList.add("wrong");
-    }
-
-    setTimeout(()=>{
-
-        current++;
-
-        if(current<questions.length){
-
-            resetButtons();
-            loadQuestion();
-
-        }else{
-
-            document.body.innerHTML=
-            `
-            <h1 style="color:gold;margin-top:150px;">
-            🎉 GRATULACJE! 🎉
-            <br><br>
-            WYGRAŁEŚ 1 000 000 ZŁ
-            </h1>
+        
+        setTimeout(()=>{
+            let finalPrize = getGuaranteedMoney(current);
+            document.getElementById("gameBox").innerHTML = `
+                <h1 style="color:#e74c3c; font-size: 35px;">❌ KONIEC GRY! ❌</h1>
+                <p style="font-size: 22px;">Niestety, to błędna odpowiedź.</p>
+                <p style="font-size: 24px;">Twoja wygrana to kwota gwarantowana:</p>
+                <h2 style="color:gold; font-size: 38px;">${finalPrize}</h2>
+                <button onclick="location.reload()" style="width: auto; padding: 15px 30px; margin-top: 20px; background: #gold; color: white;">Spróbuj ponownie od początku</button>
             `;
-
-        }
-
-    },2000);
+        }, 2000);
+    }
 }
 
-function resetButtons(){
-
-    buttons.forEach(id=>{
-
-        let btn=document.getElementById(id);
-
-        btn.disabled=false;
-        btn.classList.remove("correct");
-        btn.classList.remove("wrong");
-
-    });
-
-}
-
+// Koła ratunkowe
 document.getElementById("fifty").onclick=function(){
-
     if(fiftyUsed) return;
-
     fiftyUsed=true;
 
     let correct=questions[current].correct;
-
     let wrong=[];
 
     for(let i=0;i<4;i++){
@@ -324,40 +238,33 @@ document.getElementById("fifty").onclick=function(){
             wrong.push(i);
         }
     }
-
+    // Losowe usunięcie dwóch błędnych odpowiedzi
     wrong.sort(()=>Math.random()-0.5);
 
-    document.getElementById(buttons[wrong[0]])
-        .style.visibility="hidden";
-
-    document.getElementById(buttons[wrong[1]])
-        .style.visibility="hidden";
+    document.getElementById(buttons[wrong[0]]).style.visibility="hidden";
+    document.getElementById(buttons[wrong[1]]).style.visibility="hidden";
 
     this.disabled=true;
+    this.style.opacity = 0.4;
 }
 
 document.getElementById("friend").onclick=function(){
-
     if(friendUsed) return;
-
     friendUsed=true;
 
     let correct=questions[current].correct;
-
     let answer;
 
     if(Math.random()<0.8){
         answer=["A","B","C","D"][correct];
-    }
-    else{
-        answer=["A","B","C","D"]
-        [Math.floor(Math.random()*4)];
+    } else {
+        answer=["A","B","C","D"][Math.floor(Math.random()*4)];
     }
 
-    document.getElementById("hint").innerText=
-    "📞 Przyjaciel mówi: Myślę, że poprawna odpowiedź to " + answer;
+    document.getElementById("hint").innerText= "📞 Przyjaciel mówi: Myślę, że poprawna odpowiedź to " + answer;
 
     this.disabled=true;
+    this.style.opacity = 0.4;
 }
 
 document.getElementById("a").onclick=()=>check(0);
@@ -366,7 +273,6 @@ document.getElementById("c").onclick=()=>check(2);
 document.getElementById("d").onclick=()=>check(3);
 
 loadQuestion();
-
 </script>
 
 </body>
