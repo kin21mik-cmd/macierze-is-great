@@ -37,28 +37,24 @@ body{
     align-items:center;
 }
 
-/* TYTUŁ */
 h1{
     font-size:80px;
     color:gold;
-    margin-bottom:30px;
 }
 
 /* PYTANIE */
 .question{
     font-size:35px;
-    margin-bottom:40px;
-    max-width:900px;
-    text-align: center;
+    margin:40px;
+    text-align:center;
 }
 
-/* KAFELKI OGROMNE */
 .answers{
     display:grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:1fr 1fr;
     gap:30px;
     width:80%;
-    max-width: 1000px;
+    max-width:1000px;
 }
 
 .card{
@@ -71,8 +67,7 @@ h1{
     border-radius:20px;
     cursor:pointer;
     transition:0.3s;
-    text-align: center;
-    padding: 0 15px; /* Dodane, aby tekst nie przylegał do krawędzi */
+    text-align:center;
 }
 
 .card:hover{
@@ -80,8 +75,8 @@ h1{
     transform:scale(1.05);
 }
 
-.correct{background:green !important;}
-.wrong{background:red !important;}
+.correct{background:green!important;}
+.wrong{background:red!important;}
 
 .money{
     margin-top:30px;
@@ -89,16 +84,60 @@ h1{
     color:gold;
 }
 
-/* KOŁA */
+/* KOŁA RATUNKOWE */
 .lifelines button{
     padding:15px 30px;
-    font-size:18px;
     margin:10px;
     background:orange;
     border:none;
     border-radius:10px;
     cursor:pointer;
-    color: white; /* Dodane dla lepszej czytelności */
+}
+
+/* EKRANY KOŃCOWE */
+.end-screen{
+    position:fixed;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-size:60px;
+    text-align:center;
+}
+
+/* SMUTNE MINKI */
+.sad span{
+    position:absolute;
+    font-size:30px;
+    animation:sadFall linear infinite;
+}
+
+@keyframes sadFall{
+    0%{transform:translateY(-100px);}
+    100%{transform:translateY(100vh);}
+}
+
+/* FAJERWERKI */
+.firework{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:yellow;
+    border-radius:50%;
+    animation:explode 1s forwards;
+}
+
+@keyframes explode{
+    0%{transform:scale(1);}
+    100%{transform:scale(8); opacity:0;}
+}
+
+/* SKRZYNIA */
+.chest{
+    font-size:100px;
+    margin-top:30px;
 }
 
 </style>
@@ -109,13 +148,7 @@ h1{
 <div class="money-bg"></div>
 
 <div class="main">
-
 <h1>💰 MILIONERZY 💰</h1>
-
-<div class="lifelines">
-<button onclick="use5050()">50/50</button>
-<button onclick="friend()">📞 Przyjaciel</button>
-</div>
 
 <div class="question" id="question"></div>
 
@@ -127,7 +160,6 @@ h1{
 </div>
 
 <div class="money" id="money"></div>
-
 </div>
 
 <script>
@@ -137,131 +169,43 @@ for(let i=0;i<25;i++){
     let s=document.createElement("span");
     s.innerText="$";
     s.style.left=Math.random()*100+"%";
-    s.style.animationDuration=(5+Math.random()*5)+"s";
+    s.style.animationDuration=(4+Math.random()*4)+"s";
     document.querySelector(".money-bg").appendChild(s);
 }
 
-/* GRA */
-
+/* DANE */
 let current=0;
 
-const money=[
-"100 zł","200 zł","500 zł","1000 zł",
-"2000 zł","5000 zł","10000 zł","50000 zł",
-"100000 zł","500000 zł","1000000 zł"
-];
+const money=["100","200","500","1000"];
 
 const questions=[
 {
-q:"Metoda Sarrusa służy do:",
-answers:["Gaussa","transpozycji","mnożenia","wyznacznika 3x3"],
-correct:3
-},
-{
-q:"Jeśli det ≠ 0 to macierz:",
-answers:["ma ∞ rozwiązań","zerowa","jest odwracalna","losowa"],
-correct:2
-},
-{
-q:"Metoda Gaussa polega na:",
-answers:[
-"sprowadzaniu do postaci schodkowej",
-"transpozycji",
-"mnożeniu macierzy",
-"wyznaczaniu det 2x2"
-],
-correct:0
-},
-{
-q:"Twierdzenie Kroneckera-Capellego mówi o:",
-answers:[
-"transpozycji",
-"macierzy zerowej",
-"liczbie rozwiązań układu równań",
-"wyznaczniku"
-],
-correct:2
-},
-{
-q:"Układ ma jedno rozwiązanie gdy:",
-answers:[
-"zawsze",
-"det = 0",
-"rzędy = liczbie niewiadomych",
-"brak równań"
-],
-correct:2
-},
-{
-q:"Metoda Gaussa–Jordana prowadzi macierz do postaci:",
-answers:[
-"schodkowej zredukowanej",
-"zerowej",
-"diagonalnej",
-"symetrycznej"
-],
-correct:0
-},
-{
-q:"W metodzie Gaussa–Jordana zerujemy elementy:",
-answers:[
-"tylko pod elementem głównym",
-"tylko nad elementem głównym",
-"nad i pod elementem głównym",
-"tylko w pierwszym wierszu"
-],
-correct:2
-},
-{
-q:"Które zdanie jest prawdziwe dla macierzy diagonalnej?",
-answers:[
-"Wszystkie elementy poza główną przekątną są równe jeden.",
-"Wszystkie elementy poza główną przekątną są równe zero.",
-"Wszystkie elementy na głównej przekątnej są równe zero.",
-"Symetryczna względem głównej przekątnej."
-],
+q:"2+2=",
+answers:["3","4","5","6"],
 correct:1
 },
 {
-q:"Odwrotność macierzy A istnieje, jeśli:",
-answers:[
-"jest macierzą zerową",
-"det(A) = 0",
-"jest macierzą jednostkową",
-"det(A) ≠ 0"
-],
-correct:3
-},
-{
-q:"Mnożenie macierzy A przez B jest możliwe, gdy:",
-answers:[
-"liczba wierszy A = liczba kolumn B",
-"liczba kolumn A = liczba kolumn B",
-"liczba wierszy A = liczba wierszy B",
-"liczba kolumn A = liczba wierszy B"
-],
-correct:3
-},
-{
-q:"Po zakończeniu metody Gaussa–Jordana po lewej stronie macierzy rozszerzonej otrzymujemy najczęściej:",
-answers:[
-"macierz zerową",
-"macierz jednostkową",
-"macierz diagonalną",
-"macierz transponowaną"
-],
+q:"Stolica Polski?",
+answers:["Berlin","Warszawa","Paryż","Rzym"],
 correct:1
+},
+{
+q:"HTML to?",
+answers:["język programowania","język znaczników","baza danych","system"],
+correct:1
+},
+{
+q:"5*5=",
+answers:["10","20","25","30"],
+correct:2
 }
 ];
 
-/* MIESZANIE ODPOWIEDZI */
+/* LOSOWANIE */
 function shuffle(q){
-    // Tworzy mapę z oryginalnych odpowiedzi i ich indeksów
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
-    // Mieszanie kolejności odpowiedzi
     arr.sort(()=>Math.random()-0.5);
     q.shuffled=arr;
-    // Znajduje nowy indeks dla poprawnej odpowiedzi po przemieszaniu
     q.newCorrect=arr.findIndex(a=>a.id===q.correct);
 }
 
@@ -271,11 +215,9 @@ function load(){
     let q=questions[current];
 
     document.getElementById("question").innerText=q.q;
-
-    document.getElementById("a").innerText="A. "+q.shuffled[0].text;
-    document.getElementById("b").innerText="B. "+q.shuffled[1].text;
-    document.getElementById("c").innerText="C. "+q.shuffled[2].text;
-    document.getElementById("d").innerText="D. "+q.shuffled[3].text;
+    ["a","b","c","d"].forEach((id,i)=>{
+        document.getElementById(id).innerText=q.shuffled[i].text;
+    });
 
     document.getElementById("money").innerText="Wygrana: "+money[current];
 }
@@ -285,75 +227,71 @@ function answer(i){
     let correct=q.newCorrect;
     let ids=["a","b","c","d"];
 
-    // Blokuje możliwość kliknięcia innych odpowiedzi po wyborze
-    ids.forEach((id,idx)=>{
-        let el=document.getElementById(id);
-        el.onclick=null;
-    });
+    ids.forEach(id=>document.getElementById(id).onclick=null);
 
-    // Podświetla poprawną odpowiedź na zielono
     document.getElementById(ids[correct]).classList.add("correct");
 
-    // Jeśli wybrana odpowiedź nie jest poprawna, podświetla ją na czerwono
     if(i!==correct){
         document.getElementById(ids[i]).classList.add("wrong");
     }
 
-    setTimeout(() => {
-        if(i === correct){
+    setTimeout(()=>{
+        if(i===correct){
             current++;
-            if(current < questions.length){
-                reset();
-                load();
-            } else {
-                document.body.innerHTML="<h1>🎉 MILION ZDOBYTY!</h1>";
+            if(current<questions.length){
+                reset(); load();
+            } else{
+                winGame();
             }
-        } else {
-            document.body.innerHTML="<h1>❌ KONIEC GRY</h1>";
+        } else{
+            gameOver();
         }
-    }, 1500); // Czas na podświetlenie odpowiedzi przed przejściem dalej
+    },1200);
 }
 
 function reset(){
     ["a","b","c","d"].forEach((id,i)=>{
         let el=document.getElementById(id);
-        el.classList="card"; // Resetuje klasy, usuwając 'correct'/'wrong'
-        el.onclick=()=>answer(i); // Przywraca funkcję kliknięcia
-        el.style.visibility="visible"; // Ustawia widoczność dla 50/50
+        el.className="card";
+        el.onclick=()=>answer(i);
     });
 }
 
-/* 50/50 */
-function use5050(){
-    // Wyłącza przycisk 50/50 po użyciu
-    document.querySelector(".lifelines button:first-child").disabled = true;
+/* PRZEGRANA */
+function gameOver(){
+    document.body.innerHTML=
+    `<div class="end-screen sad">😢 KONIEC GRY 😢</div>`;
 
-    let q=questions[current];
-    let correct=q.newCorrect;
-    let removedCount=0;
-    let possibleToRemove = [0, 1, 2, 3].filter(idx => idx !== correct); // Indeksy odpowiedzi do usunięcia
-
-    // Losowo usuwa dwie błędne odpowiedzi
-    while (removedCount < 2 && possibleToRemove.length > 0) {
-        let randomIndex = Math.floor(Math.random() * possibleToRemove.length);
-        let idToRemove = possibleToRemove[randomIndex];
-        document.getElementById(["a","b","c","d"][idToRemove]).style.visibility="hidden";
-        possibleToRemove.splice(randomIndex, 1); // Usuwa, żeby nie wylosować ponownie
-        removedCount++;
+    for(let i=0;i<30;i++){
+        let s=document.createElement("span");
+        s.innerText="😢";
+        s.style.left=Math.random()*100+"%";
+        s.style.animationDuration=(3+Math.random()*3)+"s";
+        document.body.appendChild(s);
     }
 }
 
-/* telefon */
-function friend(){
-    // Wyłącza przycisk Przyjaciel po użyciu
-    document.querySelector(".lifelines button:last-child").disabled = true;
+/* WYGRANA */
+function winGame(){
+    document.body.innerHTML=
+    `<div class="end-screen">
+        🎉 MILION ZDOBYTY! 🎉
+        <div class="chest">💰</div>
+    </div>`;
 
-    let q=questions[current];
-    // Symuluje, że przyjaciel zawsze zna poprawną odpowiedź
-    alert("📞 Przyjaciel: Myślę, że poprawna odpowiedź to "+["A","B","C","D"][q.newCorrect]+".");
+    setInterval(()=>{
+        let f=document.createElement("div");
+        f.classList.add("firework");
+        f.style.left=Math.random()*100+"%";
+        f.style.top=Math.random()*100+"%";
+        document.body.appendChild(f);
+
+        setTimeout(()=>f.remove(),1000);
+    },150);
 }
 
-load(); // Ładuje pierwsze pytanie przy starcie
+load();
+
 </script>
 
 </body>
