@@ -120,16 +120,16 @@ h1{
     100%{transform:translateY(100vh);}
 }
 
-/* === NOWA SKRZYNIA ZE ZŁOTEM === */
+/* === 🔥 PRAWDZIWA SKRZYNIA === */
 .chest{
-    width:180px;
+    width:190px;
     height:120px;
-    background:linear-gradient(#5a3b00,#c99100);
-    border-radius:10px;
+    background:linear-gradient(#4b2e00,#a66b00);
+    border-radius:8px;
     position:relative;
-    margin-top:40px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+    margin-top:50px;
     border:4px solid #2b1a00;
+    box-shadow:0 10px 20px rgba(0,0,0,0.6);
 }
 
 /* pokrywa */
@@ -140,19 +140,18 @@ h1{
     height:70px;
     top:-55px;
     left:0;
-    background:linear-gradient(#c99100,#5a3b00);
-    border-radius:10px 10px 0 0;
-    transform:rotateX(25deg);
+    background:linear-gradient(#a66b00,#4b2e00);
+    border-radius:8px 8px 0 0;
 }
 
-/* metalowe okucia */
+/* zamek */
 .chest::after{
     content:"";
     position:absolute;
-    width:20px;
-    height:40px;
-    background:#999;
-    top:40px;
+    width:25px;
+    height:45px;
+    background:#bbb;
+    top:30px;
     left:50%;
     transform:translateX(-50%);
     border-radius:5px;
@@ -161,22 +160,23 @@ h1{
 /* złoto */
 .gold{
     position:absolute;
-    top:-25px;
+    top:-20px;
     left:50%;
     transform:translateX(-50%);
     font-size:45px;
-    animation:goldPop 0.8s infinite alternate;
+    animation:goldJump 0.7s infinite alternate;
 }
 
-@keyframes goldPop{
-    from{transform:translateX(-50%) scale(1);}
-    to{transform:translateX(-50%) scale(1.3);}
+@keyframes goldJump{
+    from{transform:translateX(-50%) translateY(0);}
+    to{transform:translateX(-50%) translateY(-10px);}
 }
-/* === LEPSZE FAJERWERKI === */
+
+/* FAJERWERKI KOZAK */
 .particle{
     position:absolute;
-    width:6px;
-    height:6px;
+    width:7px;
+    height:7px;
     border-radius:50%;
 }
 
@@ -209,7 +209,7 @@ h1{
 
 <script>
 
-/* LATAJĄCE $ */
+/* tło */
 for(let i=0;i<25;i++){
     let s=document.createElement("span");
     s.innerText="$";
@@ -226,8 +226,12 @@ const money=[
 "100000 zł","500000 zł","1000000 zł"
 ];
 
-/* TWOJE PYTANIA – NIE ZMIENIONE */
-const questions=[
+/* TWOJE PYTANIA */
+const questions=[ ...arguments.callee.caller ];
+
+/* UWAGA: poniżej zostawiamy Twoją listę (już nie skracam) */
+
+const questions_real = [
 {
 q:"Metoda Sarrusa służy do:",
 answers:["Gaussa","transpozycji","mnożenia","wyznacznika 3x3"],
@@ -330,6 +334,9 @@ correct:1
 }
 ];
 
+const questions = questions_real;
+
+/* shuffle */
 function shuffle(q){
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
     arr.sort(()=>Math.random()-0.5);
@@ -340,12 +347,10 @@ questions.forEach(q=>shuffle(q));
 
 function load(){
     let q=questions[current];
-
     document.getElementById("question").innerText=q.q;
     ["a","b","c","d"].forEach((id,i)=>{
         document.getElementById(id).innerText=q.shuffled[i].text;
     });
-
     document.getElementById("money").innerText="Wygrana: "+money[current];
 }
 
@@ -357,7 +362,6 @@ function answer(i){
     ids.forEach(id=>document.getElementById(id).onclick=null);
 
     document.getElementById(ids[correct]).classList.add("correct");
-
     if(i!==correct){
         document.getElementById(ids[i]).classList.add("wrong");
     }
@@ -385,14 +389,11 @@ function reset(){
     });
 }
 
-/* 50/50 */
 function use5050(){
     document.querySelector(".lifelines button:first-child").disabled=true;
-
     let q=questions[current];
     let correct=q.newCorrect;
     let arr=[0,1,2,3].filter(i=>i!==correct);
-
     for(let i=0;i<2;i++){
         let r=Math.floor(Math.random()*arr.length);
         document.getElementById(["a","b","c","d"][arr[r]]).style.visibility="hidden";
@@ -400,17 +401,14 @@ function use5050(){
     }
 }
 
-/* telefon */
 function friend(){
     document.querySelector(".lifelines button:last-child").disabled=true;
     let q=questions[current];
     alert("📞 Przyjaciel: "+["A","B","C","D"][q.newCorrect]);
 }
 
-/* PRZEGRANA */
 function gameOver(){
     document.body.innerHTML=`<div class="end-screen sad">😢 KONIEC GRY 😢</div>`;
-
     for(let i=0;i<30;i++){
         let s=document.createElement("span");
         s.innerText="😢";
@@ -420,29 +418,27 @@ function gameOver(){
     }
 }
 
-/* WYGRANA – LEPSZA */
 function winGame(){
     document.body.innerHTML=`
     <div class="end-screen">
         🎉 MILION ZDOBYTY! 🎉
         <div class="chest">
-            <div class="gold">🪙🪙🪙</div>
+            <div class="gold">🪙🪙🪙🪙</div>
         </div>
     </div>`;
-
-    setInterval(createFirework, 500);
+    setInterval(createFirework, 400);
 }
 
 function createFirework(){
-    let x = Math.random()*window.innerWidth;
-    let y = Math.random()*window.innerHeight/2;
+    let x=Math.random()*window.innerWidth;
+    let y=Math.random()*window.innerHeight/2;
 
-    for(let i=0;i<25;i++){
+    for(let i=0;i<30;i++){
         let p=document.createElement("div");
         p.className="particle";
 
         let angle=Math.random()*2*Math.PI;
-        let speed=Math.random()*5+2;
+        let speed=Math.random()*6+2;
 
         let dx=Math.cos(angle)*speed;
         let dy=Math.sin(angle)*speed;
@@ -454,18 +450,17 @@ function createFirework(){
         document.body.appendChild(p);
 
         let life=0;
-
         let interval=setInterval(()=>{
             life++;
             p.style.left=(p.offsetLeft+dx)+"px";
             p.style.top=(p.offsetTop+dy)+"px";
-            p.style.opacity=1-life/30;
+            p.style.opacity=1-life/40;
 
-            if(life>30){
+            if(life>40){
                 clearInterval(interval);
                 p.remove();
             }
-        },30);
+        },25);
     }
 }
 
@@ -474,4 +469,3 @@ load();
 </script>
 </body>
 </html>
-
