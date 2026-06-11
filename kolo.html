@@ -12,7 +12,7 @@ body{
     font-family:Arial,sans-serif;
     background:linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
     text-align:center;
-    overflow-x:hidden;
+    overflow:hidden;
 }
 
 h1{
@@ -26,7 +26,7 @@ h1{
     margin:10px auto;
     border-left:20px solid transparent;
     border-right:20px solid transparent;
-    border-top:30px solid #ff6b81;
+    border-top:30px solid #ff4d6d;
 }
 
 #wheel{
@@ -43,8 +43,6 @@ button{
     border:none;
     border-radius:30px;
     cursor:pointer;
-    color:white;
-    box-shadow:0 6px 15px rgba(0,0,0,.25);
     transition:.3s;
 }
 
@@ -53,11 +51,12 @@ button:hover{
 }
 
 .spin{
+    color:white;
     background:linear-gradient(135deg,#36d1dc,#5b86e5);
 }
 
 .answerBtn{
-    background:linear-gradient(135deg,#f7971e,#ffd200);
+    background:linear-gradient(135deg,#ffd200,#f7971e);
     color:#333;
 }
 
@@ -69,25 +68,10 @@ button:hover{
 }
 
 #answer{
-    margin-top:15px;
-    font-size:20px;
-    color:#1b5e20;
-    font-weight:bold;
-}
-
-#matrixBox{
-    display:none;
     margin-top:20px;
-}
-
-#matrixBox pre{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    display:inline-block;
-    box-shadow:0 4px 15px rgba(0,0,0,.2);
-    font-size:24px;
-    line-height:1.6;
+    font-size:20px;
+    color:#006400;
+    font-weight:bold;
 }
 
 .chicken{
@@ -110,7 +94,7 @@ button:hover{
 
 <div class="arrow"></div>
 
-<canvas id="wheel" width="350" height="350"></canvas>
+<canvas id="wheel" width="450" height="450"></canvas>
 
 <br>
 
@@ -124,88 +108,72 @@ Kliknij „Losuj pytanie”
 
 <div id="answer"></div>
 
-<div id="matrixBox">
-<pre>
-| 1   1   1 |  6 |
-| 2  -1   1 |  3 |
-| 1   2  -1 |  2 |
-</pre>
-</div>
-
 <script>
 
 const tasks = [
 
-{
-nr:1,
-q:"Kiedy układ równań jest oznaczony?",
-a:"Gdy r(A)=r(A|b)=n."
-},
+{nr:1,q:"Co oznacza r(A)?",a:"Rząd macierzy głównej A."},
 
-{
-nr:2,
-q:"Kiedy układ nie ma rozwiązania?",
-a:"Gdy r(A) ≠ r(A|b)."
-},
+{nr:2,q:"Co oznacza r(A|b)?",a:"Rząd macierzy rozszerzonej układu."},
 
-{
-nr:3,
-q:"Kiedy układ ma nieskończenie wiele rozwiązań?",
-a:"Gdy r(A)=r(A|b)<n."
-},
+{nr:3,q:"Co to jest macierz rozszerzona?",a:"Macierz główna z dołączoną kolumną wyrazów wolnych."},
 
-{
-nr:4,
-q:"Na czym polega metoda Gaussa-Jordana?",
-a:"Na sprowadzeniu macierzy rozszerzonej do zredukowanej postaci schodkowej (RREF)."
-},
+{nr:4,q:"Na czym polega metoda Gaussa-Jordana?",a:"Na sprowadzeniu macierzy rozszerzonej do normalnej postaci schodkowej."},
 
-{
-nr:5,
-q:"Jaki warunek musi spełniać macierz, aby była odwracalna?",
-a:"Wyznacznik macierzy musi być różny od zera."
-},
+{nr:5,q:"Po co stosujemy metodę Gaussa-Jordana?",a:"Aby rozwiązać układ równań liniowych."},
 
-{
-nr:6,
-q:"Co oznacza rząd macierzy?",
-a:"Liczbę liniowo niezależnych wierszy lub kolumn."
-},
+{nr:6,q:"Jakie operacje elementarne można wykonywać na wierszach?",a:"Zamiana wierszy, mnożenie wiersza przez liczbę różną od zera, dodanie wielokrotności jednego wiersza do drugiego."},
 
-{
-nr:7,
-q:"Rozwiąż układ metodą Gaussa-Jordana.",
-a:"x = 1, y = 2, z = 3",
-matrix:true
-}
+{nr:7,q:"Kiedy układ ma rozwiązanie?",a:"Gdy r(A)=r(A|b)."},
+
+{nr:8,q:"Kiedy układ nie ma rozwiązania?",a:"Gdy r(A)≠r(A|b)."},
+
+{nr:9,q:"Kiedy układ ma dokładnie jedno rozwiązanie?",a:"Gdy r(A)=r(A|b)=n."},
+
+{nr:10,q:"Kiedy układ ma nieskończenie wiele rozwiązań?",a:"Gdy r(A)=r(A|b)<n."},
+
+{nr:11,q:"Każdy układ jednorodny ma rozwiązanie — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
+
+{nr:12,q:"Układ sprzeczny ma rozwiązanie — PRAWDA czy FAŁSZ?",a:"FAŁSZ."},
+
+{nr:13,q:"Można pomnożyć wiersz macierzy przez 0 — PRAWDA czy FAŁSZ?",a:"FAŁSZ."},
+
+{nr:14,q:"Zamiana miejscami dwóch wierszy jest operacją elementarną — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
+
+{nr:15,q:"Macierz rozszerzona zawiera kolumnę wyrazów wolnych — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
+
+{nr:16,q:"Jeśli r(A)=2, r(A|b)=2 i n=2, ile rozwiązań ma układ?",a:"Jedno rozwiązanie, bo r(A)=r(A|b)=n."},
+
+{nr:17,q:"Jeśli r(A)=2, r(A|b)=2 i n=4, ile rozwiązań ma układ?",a:"Nieskończenie wiele, bo r(A)=r(A|b)<n."},
+
+{nr:18,q:"Jeśli r(A)=2, r(A|b)=3, czy układ ma rozwiązanie?",a:"Nie, bo r(A)≠r(A|b)."},
+
+{nr:19,q:"Ile parametrów ma rozwiązanie, jeśli n=5 i r=3?",a:"2 parametry, bo n-r=2."},
+
+{nr:20,q:"Co oznacza n w twierdzeniu Kroneckera-Capellego?",a:"Liczbę niewiadomych."}
 
 ];
 
 const colors = [
-"#ffadad",
-"#ffd6a5",
-"#fdffb6",
-"#caffbf",
-"#9bf6ff",
-"#a0c4ff",
-"#ffc6ff"
+"#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff",
+"#a0c4ff","#bdb2ff","#ffc6ff","#ffadad","#ffd6a5",
+"#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff",
+"#ffc6ff","#ffadad","#ffd6a5","#fdffb6","#caffbf"
 ];
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
-const radius = canvas.width / 2;
+const radius = canvas.width/2;
 
 let currentRotation = 0;
 let currentIndex = null;
 
 function drawWheel(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+const step = (2*Math.PI)/tasks.length;
 
-const step = (2 * Math.PI) / tasks.length;
-
-for(let i = 0; i < tasks.length; i++){
+for(let i=0;i<tasks.length;i++){
 
 ctx.beginPath();
 ctx.moveTo(radius,radius);
@@ -216,8 +184,8 @@ ctx.arc(
 radius,
 radius,
 radius,
-i * step,
-(i + 1) * step
+i*step,
+(i+1)*step
 );
 
 ctx.fill();
@@ -225,13 +193,13 @@ ctx.fill();
 ctx.save();
 
 ctx.translate(radius,radius);
-ctx.rotate(i * step + step / 2);
+ctx.rotate(i*step + step/2);
 
-ctx.textAlign = "right";
-ctx.fillStyle = "#333";
-ctx.font = "bold 22px Arial";
+ctx.textAlign="right";
+ctx.fillStyle="#333";
+ctx.font="bold 18px Arial";
 
-ctx.fillText(tasks[i].nr, radius - 20, 8);
+ctx.fillText(tasks[i].nr,radius-15,5);
 
 ctx.restore();
 }
@@ -242,17 +210,15 @@ drawWheel();
 function spin(){
 
 currentIndex =
-Math.floor(Math.random() * tasks.length);
+Math.floor(Math.random()*tasks.length);
 
-const sliceAngle = 360 / tasks.length;
+const sliceAngle = 360/tasks.length;
 
 const targetAngle =
-360 -
-(currentIndex * sliceAngle + sliceAngle / 2);
+360 - (currentIndex*sliceAngle + sliceAngle/2);
 
 currentRotation +=
-360 * 5 +
-targetAngle;
+360*6 + targetAngle;
 
 canvas.style.transform =
 `rotate(${currentRotation}deg)`;
@@ -262,25 +228,20 @@ document.getElementById("question").innerHTML =
 
 document.getElementById("answer").innerHTML = "";
 
-document.getElementById("matrixBox").style.display =
-"none";
-
-setTimeout(() => {
+setTimeout(()=>{
 
 document.getElementById("question").innerHTML =
-`<b>Pytanie ${tasks[currentIndex].nr}</b><br><br>${tasks[currentIndex].q}`;
-
-if(tasks[currentIndex].matrix){
-document.getElementById("matrixBox").style.display =
-"block";
-}
+"<h2>Pytanie " +
+tasks[currentIndex].nr +
+"</h2>" +
+tasks[currentIndex].q;
 
 },5000);
 }
 
 function showAnswer(){
 
-if(currentIndex === null) return;
+if(currentIndex===null) return;
 
 document.getElementById("answer").innerHTML =
 "✅ " + tasks[currentIndex].a;
@@ -295,15 +256,15 @@ chick.className = "chicken";
 chick.innerText = "🐥";
 
 chick.style.left =
-Math.random() * window.innerWidth + "px";
+Math.random()*window.innerWidth + "px";
 
 chick.style.top =
-Math.random() * window.innerHeight + "px";
+Math.random()*window.innerHeight + "px";
 
 document.body.appendChild(chick);
 }
 
-for(let i = 0; i < 12; i++){
+for(let i=0;i<15;i++){
 createChick();
 }
 
@@ -312,4 +273,5 @@ createChick();
 </body>
 </html>
 ```
+
 
