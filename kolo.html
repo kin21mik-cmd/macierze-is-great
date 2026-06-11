@@ -1,16 +1,18 @@
+```html
 <!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎡 Koło Fortuny – Gauss-Jordan</title>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
     text-align:center;
-    overflow:hidden;
+    overflow-x:hidden;
 }
 
 h1{
@@ -18,24 +20,23 @@ h1{
     color:#444;
 }
 
-#wheel{
-    margin-top:20px;
-    border-radius:50%;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-    transition: transform 5s cubic-bezier(0.1,0.8,0.2,1);
-}
-
 .arrow{
     width:0;
     height:0;
-    margin:0 auto;
+    margin:10px auto;
     border-left:20px solid transparent;
     border-right:20px solid transparent;
     border-top:30px solid #ff6b81;
 }
 
+#wheel{
+    border-radius:50%;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    transition:transform 5s cubic-bezier(.1,.8,.2,1);
+}
+
 button{
-    margin-top:20px;
+    margin-top:15px;
     padding:15px 35px;
     font-size:20px;
     font-weight:bold;
@@ -43,8 +44,12 @@ button{
     border-radius:30px;
     cursor:pointer;
     color:white;
-    box-shadow:0 6px 15px rgba(0,0,0,0.25);
-    transition:all .3s ease;
+    box-shadow:0 6px 15px rgba(0,0,0,.25);
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.08);
 }
 
 .spin{
@@ -56,41 +61,45 @@ button{
     color:#333;
 }
 
-button:hover{
-    transform:scale(1.1);
-}
-
 #question{
-    margin-top:20px;
-    font-size:20px;
+    margin-top:25px;
+    font-size:22px;
     font-weight:bold;
+    color:#333;
 }
 
 #answer{
-    margin-top:10px;
-    font-size:18px;
-    color:#2f4f4f;
+    margin-top:15px;
+    font-size:20px;
+    color:#1b5e20;
+    font-weight:bold;
 }
 
-#matrixImg{
+#matrixBox{
     display:none;
-    margin-top:15px;
-    max-width:350px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    margin-top:20px;
+}
+
+#matrixBox pre{
     background:white;
+    padding:20px;
+    border-radius:15px;
+    display:inline-block;
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+    font-size:24px;
+    line-height:1.6;
 }
 
 .chicken{
     position:absolute;
     font-size:22px;
-    animation: float 4s linear infinite;
+    animation:float 4s linear infinite;
 }
 
 @keyframes float{
-    0%{transform:translateY(0)}
-    50%{transform:translateY(-10px)}
-    100%{transform:translateY(0)}
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0);}
 }
 </style>
 </head>
@@ -110,107 +119,119 @@ button:hover{
 <button class="answerBtn" onclick="showAnswer()">📖 Pokaż odpowiedź</button>
 
 <div id="question">
-Kliknij, aby wylosować pytanie
+Kliknij „Losuj pytanie”
 </div>
 
 <div id="answer"></div>
 
-<img id="matrixImg">
+<div id="matrixBox">
+<pre>
+| 1   1   1 |  6 |
+| 2  -1   1 |  3 |
+| 1   2  -1 |  2 |
+</pre>
+</div>
 
 <script>
 
-// ====== MACIERZ JAKO OBRAZEK SVG ======
-const matrixSVG = `
-<svg xmlns="http://www.w3.org/2000/svg" width="350" height="180">
-<rect width="100%" height="100%" fill="white"/>
-
-<text x="40" y="70" font-size="40">[</text>
-<text x="300" y="70" font-size="40">]</text>
-
-<text x="70" y="50" font-size="24">1</text>
-<text x="120" y="50" font-size="24">2</text>
-<text x="170" y="50" font-size="24">1</text>
-
-<text x="70" y="90" font-size="24">2</text>
-<text x="120" y="90" font-size="24">1</text>
-<text x="170" y="90" font-size="24">-1</text>
-
-<text x="70" y="130" font-size="24">3</text>
-<text x="120" y="130" font-size="24">1</text>
-<text x="170" y="130" font-size="24">1</text>
-
-<line x1="220" y1="25" x2="220" y2="145"
-stroke="black" stroke-width="2"/>
-
-<text x="250" y="50" font-size="24">8</text>
-<text x="250" y="90" font-size="24">3</text>
-<text x="250" y="130" font-size="24">10</text>
-</svg>
-`;
-
-const matrixData =
-"data:image/svg+xml;charset=utf-8," +
-encodeURIComponent(matrixSVG);
-
-// ===== PYTANIA =====
 const tasks = [
-{q:"Kiedy układ równań ma rozwiązanie?",a:"gdy r(A|b)=r(A)"},
-{q:"Ile rozwiązań gdy r(A|b)=r(A)=n?",a:"jedno rozwiązanie"},
-{q:"Ile rozwiązań gdy r(A|b)=r(A)<n?",a:"nieskończenie wiele"},
-{q:"Na czym polega metoda Gaussa-Jordana?",a:"sprowadzamy macierz do RREF"},
-{q:"Co oznacza r(A)?",a:"rząd macierzy"},
-{q:"Co oznacza r(A|b)?",a:"rząd macierzy rozszerzonej"},
-{q:"Kiedy układ nie ma rozwiązania?",a:"gdy r(A|b) ≠ r(A)"},
-{q:"Co robimy z macierzą?",a:"upraszczamy ją do postaci schodkowej"},
-{q:"Po co stosujemy metodę?",a:"aby wyznaczyć niewiadome"},
+
 {
-q:"Rozwiąż układ z obrazka metodą Gaussa-Jordana",
-a:"Wynik: x = 1, y = 2, z = 3",
-img: matrixData
+nr:1,
+q:"Kiedy układ równań jest oznaczony?",
+a:"Gdy r(A)=r(A|b)=n."
+},
+
+{
+nr:2,
+q:"Kiedy układ nie ma rozwiązania?",
+a:"Gdy r(A) ≠ r(A|b)."
+},
+
+{
+nr:3,
+q:"Kiedy układ ma nieskończenie wiele rozwiązań?",
+a:"Gdy r(A)=r(A|b)<n."
+},
+
+{
+nr:4,
+q:"Na czym polega metoda Gaussa-Jordana?",
+a:"Na sprowadzeniu macierzy rozszerzonej do zredukowanej postaci schodkowej (RREF)."
+},
+
+{
+nr:5,
+q:"Jaki warunek musi spełniać macierz, aby była odwracalna?",
+a:"Wyznacznik macierzy musi być różny od zera."
+},
+
+{
+nr:6,
+q:"Co oznacza rząd macierzy?",
+a:"Liczbę liniowo niezależnych wierszy lub kolumn."
+},
+
+{
+nr:7,
+q:"Rozwiąż układ metodą Gaussa-Jordana.",
+a:"x = 1, y = 2, z = 3",
+matrix:true
 }
+
 ];
 
 const colors = [
-"#ffadad","#ffd6a5","#fdffb6","#caffbf",
-"#9bf6ff","#a0c4ff","#ffc6ff","#d0bdf4"
+"#ffadad",
+"#ffd6a5",
+"#fdffb6",
+"#caffbf",
+"#9bf6ff",
+"#a0c4ff",
+"#ffc6ff"
 ];
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
-const radius = canvas.width/2;
+
+const radius = canvas.width / 2;
 
 let currentRotation = 0;
 let currentIndex = null;
 
 function drawWheel(){
 
-const step = (2*Math.PI)/tasks.length;
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-for(let i=0;i<tasks.length;i++){
+const step = (2 * Math.PI) / tasks.length;
+
+for(let i = 0; i < tasks.length; i++){
 
 ctx.beginPath();
 ctx.moveTo(radius,radius);
 
-ctx.fillStyle = colors[i % colors.length];
+ctx.fillStyle = colors[i];
 
 ctx.arc(
 radius,
 radius,
 radius,
-i*step,
-(i+1)*step
+i * step,
+(i + 1) * step
 );
 
 ctx.fill();
 
 ctx.save();
-ctx.translate(radius,radius);
-ctx.rotate(i*step+step/2);
 
-ctx.textAlign="right";
-ctx.fillStyle="#333";
-ctx.font="18px Arial";
-ctx.fillText(i+1,radius-15,5);
+ctx.translate(radius,radius);
+ctx.rotate(i * step + step / 2);
+
+ctx.textAlign = "right";
+ctx.fillStyle = "#333";
+ctx.font = "bold 22px Arial";
+
+ctx.fillText(tasks[i].nr, radius - 20, 8);
 
 ctx.restore();
 }
@@ -220,39 +241,38 @@ drawWheel();
 
 function spin(){
 
-currentIndex = Math.floor(Math.random()*tasks.length);
+currentIndex =
+Math.floor(Math.random() * tasks.length);
 
-const sliceAngle = 360/tasks.length;
-const extraSpins = 360*5;
+const sliceAngle = 360 / tasks.length;
+
+const targetAngle =
+360 -
+(currentIndex * sliceAngle + sliceAngle / 2);
 
 currentRotation +=
-extraSpins +
-currentIndex*sliceAngle +
-Math.random()*sliceAngle;
+360 * 5 +
+targetAngle;
 
 canvas.style.transform =
 `rotate(${currentRotation}deg)`;
 
-document.getElementById("question").innerText =
+document.getElementById("question").innerHTML =
 "🎡 Losowanie...";
 
-document.getElementById("answer").innerText="";
+document.getElementById("answer").innerHTML = "";
 
-document.getElementById("matrixImg").style.display =
+document.getElementById("matrixBox").style.display =
 "none";
 
-setTimeout(()=>{
+setTimeout(() => {
 
-document.getElementById("question").innerText =
-tasks[currentIndex].q;
+document.getElementById("question").innerHTML =
+`<b>Pytanie ${tasks[currentIndex].nr}</b><br><br>${tasks[currentIndex].q}`;
 
-if(tasks[currentIndex].img){
-
-const img =
-document.getElementById("matrixImg");
-
-img.src = tasks[currentIndex].img;
-img.style.display = "block";
+if(tasks[currentIndex].matrix){
+document.getElementById("matrixBox").style.display =
+"block";
 }
 
 },5000);
@@ -260,11 +280,10 @@ img.style.display = "block";
 
 function showAnswer(){
 
-if(currentIndex!==null){
+if(currentIndex === null) return;
 
-document.getElementById("answer").innerText =
+document.getElementById("answer").innerHTML =
 "✅ " + tasks[currentIndex].a;
-}
 }
 
 function createChick(){
@@ -276,15 +295,15 @@ chick.className = "chicken";
 chick.innerText = "🐥";
 
 chick.style.left =
-Math.random()*window.innerWidth+"px";
+Math.random() * window.innerWidth + "px";
 
 chick.style.top =
-Math.random()*window.innerHeight+"px";
+Math.random() * window.innerHeight + "px";
 
 document.body.appendChild(chick);
 }
 
-for(let i=0;i<12;i++){
+for(let i = 0; i < 12; i++){
 createChick();
 }
 
@@ -292,3 +311,5 @@ createChick();
 
 </body>
 </html>
+```
+
