@@ -5,181 +5,38 @@
 <title>Milionerzy</title>
 
 <style>
+body{margin:0;background:#001a66;color:white;font-family:Arial;overflow:hidden;}
+.money-bg span{position:absolute;color:gold;font-size:25px;animation:fall linear infinite;}
+@keyframes fall{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
 
-/* TŁO */
-body{
-    margin:0;
-    background:#001a66;
-    color:white;
-    font-family:Arial;
-    overflow:hidden;
-}
+.main{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+h1{font-size:80px;color:gold;margin-bottom:30px;}
+.question{font-size:35px;margin-bottom:40px;max-width:900px;text-align:center;}
 
-/* LATAJĄCE $ */
-.money-bg span{
-    position:absolute;
-    color:gold;
-    font-size:25px;
-    animation:fall linear infinite;
-}
-
-@keyframes fall{
-    0%{transform:translateY(-100px);}
-    100%{transform:translateY(100vh);}
-}
-
-.main{
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-}
-
-h1{
-    font-size:80px;
-    color:gold;
-    margin-bottom:30px;
-}
-
-.question{
-    font-size:35px;
-    margin-bottom:40px;
-    max-width:900px;
-    text-align:center;
-}
-
-.answers{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:30px;
-    width:80%;
-    max-width:1000px;
-}
-
-.card{
-    height:150px;
-    font-size:26px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#002bcc;
-    border-radius:20px;
-    cursor:pointer;
-    transition:0.3s;
-    text-align:center;
-    padding:0 15px;
-}
-
-.card:hover{
-    background:#0055ff;
-    transform:scale(1.05);
-}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:80%;max-width:1000px;}
+.card{height:150px;font-size:26px;display:flex;justify-content:center;align-items:center;background:#002bcc;border-radius:20px;cursor:pointer;transition:0.3s;text-align:center;}
+.card:hover{background:#0055ff;transform:scale(1.05);}
 
 .correct{background:green!important;}
 .wrong{background:red!important;}
 
-.money{
-    margin-top:30px;
-    font-size:30px;
-    color:gold;
-}
+.money{margin-top:30px;font-size:30px;color:gold;}
 
-.lifelines button{
-    padding:15px 30px;
-    font-size:18px;
-    margin:10px;
-    background:orange;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    color:white;
-}
+.lifelines button{padding:15px 30px;margin:10px;background:orange;border:none;border-radius:10px;cursor:pointer;color:white;}
 
-/* EKRANY KOŃCOWE */
-.end-screen{
-    position:fixed;
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    font-size:60px;
-    text-align:center;
-}
+.end-screen{position:fixed;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:60px;}
 
-/* SMUTNE MINKI */
-.sad span{
-    position:absolute;
-    font-size:30px;
-    animation:sadFall linear infinite;
-}
-@keyframes sadFall{
-    0%{transform:translateY(-100px);}
-    100%{transform:translateY(100vh);}
-}
+.sad span{position:absolute;font-size:30px;animation:sadFall linear infinite;}
+@keyframes sadFall{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
 
-/* === 🔥 PRAWDZIWA SKRZYNIA === */
-.chest{
-    width:190px;
-    height:120px;
-    background:linear-gradient(#4b2e00,#a66b00);
-    border-radius:8px;
-    position:relative;
-    margin-top:50px;
-    border:4px solid #2b1a00;
-    box-shadow:0 10px 20px rgba(0,0,0,0.6);
-}
+/* SKRZYNIA */
+.chest{width:190px;height:120px;background:linear-gradient(#4b2e00,#a66b00);border-radius:8px;position:relative;margin-top:50px;border:4px solid #2b1a00;}
+.chest::before{content:"";position:absolute;width:100%;height:70px;top:-55px;background:linear-gradient(#a66b00,#4b2e00);border-radius:8px 8px 0 0;}
+.chest::after{content:"";position:absolute;width:25px;height:45px;background:#bbb;top:30px;left:50%;transform:translateX(-50%);border-radius:5px;}
+.gold{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:45px;animation:goldJump 0.7s infinite alternate;}
+@keyframes goldJump{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-10px);}}
 
-/* pokrywa */
-.chest::before{
-    content:"";
-    position:absolute;
-    width:100%;
-    height:70px;
-    top:-55px;
-    left:0;
-    background:linear-gradient(#a66b00,#4b2e00);
-    border-radius:8px 8px 0 0;
-}
-
-/* zamek */
-.chest::after{
-    content:"";
-    position:absolute;
-    width:25px;
-    height:45px;
-    background:#bbb;
-    top:30px;
-    left:50%;
-    transform:translateX(-50%);
-    border-radius:5px;
-}
-
-/* złoto */
-.gold{
-    position:absolute;
-    top:-20px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:45px;
-    animation:goldJump 0.7s infinite alternate;
-}
-
-@keyframes goldJump{
-    from{transform:translateX(-50%) translateY(0);}
-    to{transform:translateX(-50%) translateY(-10px);}
-}
-
-/* FAJERWERKI KOZAK */
-.particle{
-    position:absolute;
-    width:7px;
-    height:7px;
-    border-radius:50%;
-}
-
+.particle{position:absolute;width:7px;height:7px;border-radius:50%;}
 </style>
 </head>
 
@@ -209,7 +66,7 @@ h1{
 
 <script>
 
-/* tło */
+/* LATAJĄCE $ */
 for(let i=0;i<25;i++){
     let s=document.createElement("span");
     s.innerText="$";
@@ -226,12 +83,8 @@ const money=[
 "100000 zł","500000 zł","1000000 zł"
 ];
 
-/* TWOJE PYTANIA */
-const questions=[ ...arguments.callee.caller ];
-
-/* UWAGA: poniżej zostawiamy Twoją listę (już nie skracam) */
-
-const questions_real = [
+/* ✅ TWOJE PYTANIA */
+const questions=[
 {
 q:"Metoda Sarrusa służy do:",
 answers:["Gaussa","transpozycji","mnożenia","wyznacznika 3x3"],
@@ -334,8 +187,6 @@ correct:1
 }
 ];
 
-const questions = questions_real;
-
 /* shuffle */
 function shuffle(q){
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
@@ -357,67 +208,22 @@ function load(){
 function answer(i){
     let q=questions[current];
     let correct=q.newCorrect;
-    let ids=["a","b","c","d"];
-
-    ids.forEach(id=>document.getElementById(id).onclick=null);
-
-    document.getElementById(ids[correct]).classList.add("correct");
-    if(i!==correct){
-        document.getElementById(ids[i]).classList.add("wrong");
-    }
 
     setTimeout(()=>{
         if(i===correct){
             current++;
-            if(current<questions.length){
-                reset(); load();
-            } else{
-                winGame();
-            }
-        } else{
-            gameOver();
-        }
-    },1500);
+            if(current<questions.length){load();}
+            else{winGame();}
+        } else{gameOver();}
+    },500);
 }
 
-function reset(){
-    ["a","b","c","d"].forEach((id,i)=>{
-        let el=document.getElementById(id);
-        el.className="card";
-        el.onclick=()=>answer(i);
-        el.style.visibility="visible";
-    });
-}
-
-function use5050(){
-    document.querySelector(".lifelines button:first-child").disabled=true;
-    let q=questions[current];
-    let correct=q.newCorrect;
-    let arr=[0,1,2,3].filter(i=>i!==correct);
-    for(let i=0;i<2;i++){
-        let r=Math.floor(Math.random()*arr.length);
-        document.getElementById(["a","b","c","d"][arr[r]]).style.visibility="hidden";
-        arr.splice(r,1);
-    }
-}
-
-function friend(){
-    document.querySelector(".lifelines button:last-child").disabled=true;
-    let q=questions[current];
-    alert("📞 Przyjaciel: "+["A","B","C","D"][q.newCorrect]);
-}
-
+/* przegrana */
 function gameOver(){
     document.body.innerHTML=`<div class="end-screen sad">😢 KONIEC GRY 😢</div>`;
-    for(let i=0;i<30;i++){
-        let s=document.createElement("span");
-        s.innerText="😢";
-        s.style.left=Math.random()*100+"%";
-        s.style.animationDuration=(4+Math.random()*4)+"s";
-        document.body.appendChild(s);
-    }
 }
 
+/* wygrana */
 function winGame(){
     document.body.innerHTML=`
     <div class="end-screen">
@@ -426,42 +232,6 @@ function winGame(){
             <div class="gold">🪙🪙🪙🪙</div>
         </div>
     </div>`;
-    setInterval(createFirework, 400);
-}
-
-function createFirework(){
-    let x=Math.random()*window.innerWidth;
-    let y=Math.random()*window.innerHeight/2;
-
-    for(let i=0;i<30;i++){
-        let p=document.createElement("div");
-        p.className="particle";
-
-        let angle=Math.random()*2*Math.PI;
-        let speed=Math.random()*6+2;
-
-        let dx=Math.cos(angle)*speed;
-        let dy=Math.sin(angle)*speed;
-
-        p.style.left=x+"px";
-        p.style.top=y+"px";
-        p.style.background=`hsl(${Math.random()*360},100%,50%)`;
-
-        document.body.appendChild(p);
-
-        let life=0;
-        let interval=setInterval(()=>{
-            life++;
-            p.style.left=(p.offsetLeft+dx)+"px";
-            p.style.top=(p.offsetTop+dy)+"px";
-            p.style.opacity=1-life/40;
-
-            if(life>40){
-                clearInterval(interval);
-                p.remove();
-            }
-        },25);
-    }
 }
 
 load();
