@@ -49,6 +49,7 @@ h1{
     font-size:35px;
     margin-bottom:40px;
     max-width:900px;
+    text-align: center;
 }
 
 /* KAFELKI OGROMNE */
@@ -57,6 +58,7 @@ h1{
     grid-template-columns: 1fr 1fr;
     gap:30px;
     width:80%;
+    max-width: 1000px;
 }
 
 .card{
@@ -69,6 +71,8 @@ h1{
     border-radius:20px;
     cursor:pointer;
     transition:0.3s;
+    text-align: center;
+    padding: 0 15px; /* Dodane, aby tekst nie przylegał do krawędzi */
 }
 
 .card:hover{
@@ -94,6 +98,7 @@ h1{
     border:none;
     border-radius:10px;
     cursor:pointer;
+    color: white; /* Dodane dla lepszej czytelności */
 }
 
 </style>
@@ -149,51 +154,114 @@ const money=[
 const questions=[
 {
 q:"Metoda Sarrusa służy do:",
-answers:["wyznacznika 3x3","transpozycji","mnożenia","Gaussa"],
-correct:0
+answers:["Gaussa","transpozycji","mnożenia","wyznacznika 3x3"],
+correct:3
 },
 {
 q:"Jeśli det ≠ 0 to macierz:",
-answers:["jest odwracalna","zerowa","losowa","ma ∞ rozwiązań"],
-correct:0
+answers:["ma ∞ rozwiązań","zerowa","jest odwracalna","losowa"],
+correct:2
 },
 {
 q:"Metoda Gaussa polega na:",
 answers:[
 "sprowadzaniu do postaci schodkowej",
 "transpozycji",
-"wyznaczaniu det 2x2",
-"mnożeniu macierzy"
+"mnożeniu macierzy",
+"wyznaczaniu det 2x2"
 ],
 correct:0
 },
 {
 q:"Twierdzenie Kroneckera-Capellego mówi o:",
 answers:[
-"liczbie rozwiązań",
+"transpozycji",
 "macierzy zerowej",
-"wyznaczniku",
-"transpozycji"
+"liczbie rozwiązań układu równań",
+"wyznaczniku"
 ],
-correct:0
+correct:2
 },
 {
 q:"Układ ma jedno rozwiązanie gdy:",
 answers:[
+"zawsze",
+"det = 0",
 "rzędy = liczbie niewiadomych",
-"det=0",
-"brak równań",
-"zawsze"
+"brak równań"
+],
+correct:2
+},
+{
+q:"Metoda Gaussa–Jordana prowadzi macierz do postaci:",
+answers:[
+"schodkowej zredukowanej",
+"zerowej",
+"diagonalnej",
+"symetrycznej"
 ],
 correct:0
+},
+{
+q:"W metodzie Gaussa–Jordana zerujemy elementy:",
+answers:[
+"tylko pod elementem głównym",
+"tylko nad elementem głównym",
+"nad i pod elementem głównym",
+"tylko w pierwszym wierszu"
+],
+correct:2
+},
+{
+q:"Które zdanie jest prawdziwe dla macierzy diagonalnej?",
+answers:[
+"Wszystkie elementy poza główną przekątną są równe jeden.",
+"Wszystkie elementy poza główną przekątną są równe zero.",
+"Wszystkie elementy na głównej przekątnej są równe zero.",
+"Symetryczna względem głównej przekątnej."
+],
+correct:1
+},
+{
+q:"Odwrotność macierzy A istnieje, jeśli:",
+answers:[
+"jest macierzą zerową",
+"det(A) = 0",
+"jest macierzą jednostkową",
+"det(A) ≠ 0"
+],
+correct:3
+},
+{
+q:"Mnożenie macierzy A przez B jest możliwe, gdy:",
+answers:[
+"liczba wierszy A = liczba kolumn B",
+"liczba kolumn A = liczba kolumn B",
+"liczba wierszy A = liczba wierszy B",
+"liczba kolumn A = liczba wierszy B"
+],
+correct:3
+},
+{
+q:"Po zakończeniu metody Gaussa–Jordana po lewej stronie macierzy rozszerzonej otrzymujemy najczęściej:",
+answers:[
+"macierz zerową",
+"macierz jednostkową",
+"macierz diagonalną",
+"macierz transponowaną"
+],
+correct:1
 }
 ];
 
 /* MIESZANIE ODPOWIEDZI */
 function shuffle(q){
+    // Tworzy mapę z oryginalnych odpowiedzi i ich indeksów
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
+    // Mieszanie kolejności odpowiedzi
     arr.sort(()=>Math.random()-0.5);
     q.shuffled=arr;
+    // Znajduje nowy indeks dla poprawnej odpowiedzi po przemieszaniu
     q.newCorrect=arr.findIndex(a=>a.id===q.correct);
 }
 
@@ -217,63 +285,75 @@ function answer(i){
     let correct=q.newCorrect;
     let ids=["a","b","c","d"];
 
+    // Blokuje możliwość kliknięcia innych odpowiedzi po wyborze
     ids.forEach((id,idx)=>{
         let el=document.getElementById(id);
-
-        if(idx===correct) el.classList.add("correct");
         el.onclick=null;
     });
 
+    // Podświetla poprawną odpowiedź na zielono
+    document.getElementById(ids[correct]).classList.add("correct");
+
+    // Jeśli wybrana odpowiedź nie jest poprawna, podświetla ją na czerwono
     if(i!==correct){
         document.getElementById(ids[i]).classList.add("wrong");
     }
 
-    setTimeout(()=>{
-        if(i===correct){
+    setTimeout(() => {
+        if(i === correct){
             current++;
-            if(current<questions.length){
+            if(current < questions.length){
                 reset();
                 load();
-            }else{
+            } else {
                 document.body.innerHTML="<h1>🎉 MILION ZDOBYTY!</h1>";
             }
-        }else{
+        } else {
             document.body.innerHTML="<h1>❌ KONIEC GRY</h1>";
         }
-    },1500);
+    }, 1500); // Czas na podświetlenie odpowiedzi przed przejściem dalej
 }
 
 function reset(){
     ["a","b","c","d"].forEach((id,i)=>{
         let el=document.getElementById(id);
-        el.classList="card";
-        el.onclick=()=>answer(i);
-        el.style.visibility="visible";
+        el.classList="card"; // Resetuje klasy, usuwając 'correct'/'wrong'
+        el.onclick=()=>answer(i); // Przywraca funkcję kliknięcia
+        el.style.visibility="visible"; // Ustawia widoczność dla 50/50
     });
 }
 
 /* 50/50 */
 function use5050(){
+    // Wyłącza przycisk 50/50 po użyciu
+    document.querySelector(".lifelines button:first-child").disabled = true;
+
     let q=questions[current];
     let correct=q.newCorrect;
-    let removed=0;
+    let removedCount=0;
+    let possibleToRemove = [0, 1, 2, 3].filter(idx => idx !== correct); // Indeksy odpowiedzi do usunięcia
 
-    ["a","b","c","d"].forEach((id,i)=>{
-        if(i!==correct && removed<2){
-            document.getElementById(id).style.visibility="hidden";
-            removed++;
-        }
-    });
+    // Losowo usuwa dwie błędne odpowiedzi
+    while (removedCount < 2 && possibleToRemove.length > 0) {
+        let randomIndex = Math.floor(Math.random() * possibleToRemove.length);
+        let idToRemove = possibleToRemove[randomIndex];
+        document.getElementById(["a","b","c","d"][idToRemove]).style.visibility="hidden";
+        possibleToRemove.splice(randomIndex, 1); // Usuwa, żeby nie wylosować ponownie
+        removedCount++;
+    }
 }
 
 /* telefon */
 function friend(){
+    // Wyłącza przycisk Przyjaciel po użyciu
+    document.querySelector(".lifelines button:last-child").disabled = true;
+
     let q=questions[current];
-    alert("Przyjaciel: myślę że "+["A","B","C","D"][q.newCorrect]);
+    // Symuluje, że przyjaciel zawsze zna poprawną odpowiedź
+    alert("📞 Przyjaciel: Myślę, że poprawna odpowiedź to "+["A","B","C","D"][q.newCorrect]+".");
 }
 
-load();
-
+load(); // Ładuje pierwsze pytanie przy starcie
 </script>
 
 </body>
