@@ -18,24 +18,22 @@ h1{
     color:#444;
 }
 
-#wheel {
+#wheel{
     margin-top:20px;
     border-radius:50%;
     box-shadow:0 10px 30px rgba(0,0,0,0.2);
     transition: transform 5s cubic-bezier(0.1,0.8,0.2,1);
 }
 
-/* ✅ STRZAŁKA */
-.arrow {
-    width: 0;
-    height: 0;
-    margin: 0 auto;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 30px solid #ff6b81;
+.arrow{
+    width:0;
+    height:0;
+    margin:0 auto;
+    border-left:20px solid transparent;
+    border-right:20px solid transparent;
+    border-top:30px solid #ff6b81;
 }
 
-/* ✅ NOWE PRZYCISKI */
 button{
     margin-top:20px;
     padding:15px 35px;
@@ -44,41 +42,28 @@ button{
     border:none;
     border-radius:30px;
     cursor:pointer;
-    background: linear-gradient(135deg,#ff6b81,#ffb6c1);
     color:white;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-    transition: all 0.3s ease;
+    box-shadow:0 6px 15px rgba(0,0,0,0.25);
+    transition:all .3s ease;
 }
 
-button:hover{
-    transform: scale(1.1);
-    background: linear-gradient(135deg,#ff4d6d,#ff8fa3);
-}
-
-button:active{
-    transform: scale(0.95);
-}
-
-/* różne kolory */
 .spin{
-    background: linear-gradient(135deg,#36d1dc,#5b86e5);
-}
-.spin:hover{
-    background: linear-gradient(135deg,#2bc0e4,#3a7bd5);
+    background:linear-gradient(135deg,#36d1dc,#5b86e5);
 }
 
 .answerBtn{
-    background: linear-gradient(135deg,#f7971e,#ffd200);
+    background:linear-gradient(135deg,#f7971e,#ffd200);
     color:#333;
 }
-.answerBtn:hover{
-    background: linear-gradient(135deg,#f5af19,#f12711);
-    color:white;
+
+button:hover{
+    transform:scale(1.1);
 }
 
 #question{
     margin-top:20px;
     font-size:20px;
+    font-weight:bold;
 }
 
 #answer{
@@ -90,7 +75,10 @@ button:active{
 #matrixImg{
     display:none;
     margin-top:15px;
-    max-width:300px;
+    max-width:350px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    background:white;
 }
 
 .chicken{
@@ -99,10 +87,10 @@ button:active{
     animation: float 4s linear infinite;
 }
 
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+@keyframes float{
+    0%{transform:translateY(0)}
+    50%{transform:translateY(-10px)}
+    100%{transform:translateY(0)}
 }
 </style>
 </head>
@@ -110,37 +98,75 @@ button:active{
 <body>
 
 <h1>🎡 Koło Fortuny – Gauss-Jordan</h1>
+
 <div class="arrow"></div>
 
 <canvas id="wheel" width="350" height="350"></canvas>
 
 <br>
+
 <button class="spin" onclick="spin()">🎲 Losuj pytanie</button>
 <br>
 <button class="answerBtn" onclick="showAnswer()">📖 Pokaż odpowiedź</button>
 
-<div id="question">Kliknij, aby wylosować pytanie</div>
+<div id="question">
+Kliknij, aby wylosować pytanie
+</div>
+
 <div id="answer"></div>
 
 <img id="matrixImg">
 
 <script>
+
+// ====== MACIERZ JAKO OBRAZEK SVG ======
+const matrixSVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="350" height="180">
+<rect width="100%" height="100%" fill="white"/>
+
+<text x="40" y="70" font-size="40">[</text>
+<text x="300" y="70" font-size="40">]</text>
+
+<text x="70" y="50" font-size="24">1</text>
+<text x="120" y="50" font-size="24">2</text>
+<text x="170" y="50" font-size="24">1</text>
+
+<text x="70" y="90" font-size="24">2</text>
+<text x="120" y="90" font-size="24">1</text>
+<text x="170" y="90" font-size="24">-1</text>
+
+<text x="70" y="130" font-size="24">3</text>
+<text x="120" y="130" font-size="24">1</text>
+<text x="170" y="130" font-size="24">1</text>
+
+<line x1="220" y1="25" x2="220" y2="145"
+stroke="black" stroke-width="2"/>
+
+<text x="250" y="50" font-size="24">8</text>
+<text x="250" y="90" font-size="24">3</text>
+<text x="250" y="130" font-size="24">10</text>
+</svg>
+`;
+
+const matrixData =
+"data:image/svg+xml;charset=utf-8," +
+encodeURIComponent(matrixSVG);
+
 // ===== PYTANIA =====
 const tasks = [
-{q:"Kiedy układ równań ma rozwiązanie?", a:"gdy r(A|b) = r(A)"},
-{q:"Ile rozwiązań gdy r(A|b) = r(A) = n?", a:"jedno rozwiązanie"},
-{q:"Ile rozwiązań gdy r(A|b) = r(A) < n?", a:"nieskończenie wiele"},
-{q:"Na czym polega metoda Gaussa-Jordana?", a:"sprowadzamy macierz do RREF zerując elementy nad i pod pivotami"},
-{q:"Co oznacza r(A)?", a:"rząd macierzy"},
-{q:"Co oznacza r(A|b)?", a:"rząd macierzy z wynikami"},
-{q:"Kiedy układ nie ma rozwiązania?", a:"gdy r(A|b) ≠ r(A)"},
-{q:"Co robimy z macierzą w metodzie Gaussa-Jordana?", a:"upraszczamy ją aż dostaniemy postać schodkową"},
-{q:"Po co stosujemy metodę Gaussa-Jordana?", a:"aby znaleźć wartości niewiadomych x, y, z"},
-
+{q:"Kiedy układ równań ma rozwiązanie?",a:"gdy r(A|b)=r(A)"},
+{q:"Ile rozwiązań gdy r(A|b)=r(A)=n?",a:"jedno rozwiązanie"},
+{q:"Ile rozwiązań gdy r(A|b)=r(A)<n?",a:"nieskończenie wiele"},
+{q:"Na czym polega metoda Gaussa-Jordana?",a:"sprowadzamy macierz do RREF"},
+{q:"Co oznacza r(A)?",a:"rząd macierzy"},
+{q:"Co oznacza r(A|b)?",a:"rząd macierzy rozszerzonej"},
+{q:"Kiedy układ nie ma rozwiązania?",a:"gdy r(A|b) ≠ r(A)"},
+{q:"Co robimy z macierzą?",a:"upraszczamy ją do postaci schodkowej"},
+{q:"Po co stosujemy metodę?",a:"aby wyznaczyć niewiadome"},
 {
- q:"Rozwiąż układ (3x3) z obrazka metodą Gaussa-Jordana",
- a:"doprowadź macierz do RREF i odczytaj wartości x, y, z",
- img:"macierz.png"
+q:"Rozwiąż układ z obrazka metodą Gaussa-Jordana",
+a:"Wynik: x = 1, y = 2, z = 3",
+img: matrixData
 }
 ];
 
@@ -149,7 +175,6 @@ const colors = [
 "#9bf6ff","#a0c4ff","#ffc6ff","#d0bdf4"
 ];
 
-// ===== KOŁO =====
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 const radius = canvas.width/2;
@@ -158,79 +183,112 @@ let currentRotation = 0;
 let currentIndex = null;
 
 function drawWheel(){
-    const step = (2*Math.PI)/tasks.length;
 
-    for(let i=0;i<tasks.length;i++){
-        ctx.beginPath();
-        ctx.moveTo(radius,radius);
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.arc(radius,radius,radius,i*step,(i+1)*step);
-        ctx.fill();
+const step = (2*Math.PI)/tasks.length;
 
-        ctx.save();
-        ctx.translate(radius,radius);
-        ctx.rotate(i*step+step/2);
-        ctx.textAlign="right";
-        ctx.fillStyle="#333";
-        ctx.fillText(i+1, radius-10, 5);
-        ctx.restore();
-    }
+for(let i=0;i<tasks.length;i++){
+
+ctx.beginPath();
+ctx.moveTo(radius,radius);
+
+ctx.fillStyle = colors[i % colors.length];
+
+ctx.arc(
+radius,
+radius,
+radius,
+i*step,
+(i+1)*step
+);
+
+ctx.fill();
+
+ctx.save();
+ctx.translate(radius,radius);
+ctx.rotate(i*step+step/2);
+
+ctx.textAlign="right";
+ctx.fillStyle="#333";
+ctx.font="18px Arial";
+ctx.fillText(i+1,radius-15,5);
+
+ctx.restore();
+}
 }
 
 drawWheel();
 
-// ===== LOSOWANIE =====
 function spin(){
-    currentIndex = Math.floor(Math.random()*tasks.length);
 
-    const sliceAngle = 360 / tasks.length;
-    const extraSpins = 360 * 5;
-    const randomOffset = Math.random() * sliceAngle;
+currentIndex = Math.floor(Math.random()*tasks.length);
 
-    currentRotation += extraSpins + currentIndex*sliceAngle + randomOffset;
+const sliceAngle = 360/tasks.length;
+const extraSpins = 360*5;
 
-    canvas.style.transform = `rotate(${currentRotation}deg)`;
+currentRotation +=
+extraSpins +
+currentIndex*sliceAngle +
+Math.random()*sliceAngle;
 
-    document.getElementById("question").innerText = "🎡 Losowanie...";
-    document.getElementById("answer").innerText = "";
-    document.getElementById("matrixImg").style.display = "none";
+canvas.style.transform =
+`rotate(${currentRotation}deg)`;
 
-    setTimeout(()=>{
-        document.getElementById("question").innerText = tasks[currentIndex].q;
+document.getElementById("question").innerText =
+"🎡 Losowanie...";
 
-        if(tasks[currentIndex].img){
-            const img = document.getElementById("matrixImg");
-            img.src = tasks[currentIndex].img;
-            img.style.display = "block";
-        }
-    },5000);
+document.getElementById("answer").innerText="";
+
+document.getElementById("matrixImg").style.display =
+"none";
+
+setTimeout(()=>{
+
+document.getElementById("question").innerText =
+tasks[currentIndex].q;
+
+if(tasks[currentIndex].img){
+
+const img =
+document.getElementById("matrixImg");
+
+img.src = tasks[currentIndex].img;
+img.style.display = "block";
 }
 
-// ===== ODPOWIEDŹ =====
+},5000);
+}
+
 function showAnswer(){
-    if(currentIndex !== null){
-        document.getElementById("answer").innerText =
-        "✅ " + tasks[currentIndex].a;
-    }
+
+if(currentIndex!==null){
+
+document.getElementById("answer").innerText =
+"✅ " + tasks[currentIndex].a;
+}
 }
 
-// ===== KURCZAKI 🐥 =====
 function createChick(){
-    const chick = document.createElement("div");
-    chick.className = "chicken";
-    chick.innerText = "🐥";
 
-    chick.style.left = Math.random()*window.innerWidth + "px";
-    chick.style.top = Math.random()*window.innerHeight + "px";
+const chick =
+document.createElement("div");
 
-    document.body.appendChild(chick);
+chick.className = "chicken";
+chick.innerText = "🐥";
+
+chick.style.left =
+Math.random()*window.innerWidth+"px";
+
+chick.style.top =
+Math.random()*window.innerHeight+"px";
+
+document.body.appendChild(chick);
 }
 
 for(let i=0;i<12;i++){
-    createChick();
+createChick();
 }
+
 </script>
 
 </body>
 </html>
-
