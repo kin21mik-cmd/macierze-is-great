@@ -5,38 +5,161 @@
 <title>Milionerzy</title>
 
 <style>
-body{margin:0;background:#001a66;color:white;font-family:Arial;overflow:hidden;}
-.money-bg span{position:absolute;color:gold;font-size:25px;animation:fall linear infinite;}
-@keyframes fall{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
 
-.main{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+/* TŁO */
+body{
+    margin:0;
+    background:#001a66;
+    color:white;
+    font-family:Arial;
+    overflow:hidden;
+}
+
+/* LATAJĄCE $ */
+.money-bg span{
+    position:absolute;
+    color:gold;
+    font-size:25px;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    0%{transform:translateY(-100px);}
+    100%{transform:translateY(100vh);}
+}
+
+/* GRA */
+.main{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
 h1{font-size:80px;color:gold;margin-bottom:30px;}
-.question{font-size:35px;margin-bottom:40px;max-width:900px;text-align:center;}
 
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:80%;max-width:1000px;}
-.card{height:150px;font-size:26px;display:flex;justify-content:center;align-items:center;background:#002bcc;border-radius:20px;cursor:pointer;transition:0.3s;text-align:center;}
-.card:hover{background:#0055ff;transform:scale(1.05);}
+.question{
+    font-size:35px;
+    margin-bottom:40px;
+    max-width:900px;
+    text-align:center;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+    width:80%;
+    max-width:1000px;
+}
+
+.card{
+    height:150px;
+    font-size:26px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#002bcc;
+    border-radius:20px;
+    cursor:pointer;
+    transition:0.3s;
+    text-align:center;
+}
+
+.card:hover{
+    background:#0055ff;
+}
 
 .correct{background:green!important;}
 .wrong{background:red!important;}
 
-.money{margin-top:30px;font-size:30px;color:gold;}
+.money{
+    margin-top:30px;
+    font-size:30px;
+    color:gold;
+}
 
-.lifelines button{padding:15px 30px;margin:10px;background:orange;border:none;border-radius:10px;cursor:pointer;color:white;}
+/* KOŁA */
+.lifelines button{
+    padding:15px 30px;
+    margin:10px;
+    background:orange;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
 
-.end-screen{position:fixed;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:60px;}
+/* KONIEC */
+.end-screen{
+    position:fixed;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-size:60px;
+    text-align:center;
+}
 
-.sad span{position:absolute;font-size:30px;animation:sadFall linear infinite;}
-@keyframes sadFall{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
+/* SMUTEK */
+.sad span{
+    position:absolute;
+    font-size:30px;
+    animation:sadFall linear infinite;
+}
+@keyframes sadFall{
+    0%{transform:translateY(-100px);}
+    100%{transform:translateY(100vh);}
+}
 
-/* SKRZYNIA */
-.chest{width:190px;height:120px;background:linear-gradient(#4b2e00,#a66b00);border-radius:8px;position:relative;margin-top:50px;border:4px solid #2b1a00;}
-.chest::before{content:"";position:absolute;width:100%;height:70px;top:-55px;background:linear-gradient(#a66b00,#4b2e00);border-radius:8px 8px 0 0;}
-.chest::after{content:"";position:absolute;width:25px;height:45px;background:#bbb;top:30px;left:50%;transform:translateX(-50%);border-radius:5px;}
-.gold{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:45px;animation:goldJump 0.7s infinite alternate;}
-@keyframes goldJump{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-10px);}}
+/* ✅ DOBRA SKRZYNIA */
+.chest{
+    width:200px;
+    height:120px;
+    background:linear-gradient(#5c3b00,#b87900);
+    border:5px solid #2b1a00;
+    border-radius:10px;
+    position:relative;
+    margin-top:40px;
+}
 
-.particle{position:absolute;width:7px;height:7px;border-radius:50%;}
+.chest::before{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:80px;
+    top:-60px;
+    background:linear-gradient(#b87900,#5c3b00);
+    border-radius:10px 10px 0 0;
+}
+
+.chest::after{
+    content:"";
+    position:absolute;
+    width:30px;
+    height:50px;
+    background:#ccc;
+    top:25px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* złoto */
+.gold{
+    position:absolute;
+    top:-30px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:50px;
+    animation:goldBounce 0.6s infinite alternate;
+}
+
+@keyframes goldBounce{
+    from{transform:translateX(-50%) translateY(0);}
+    to{transform:translateX(-50%) translateY(-15px);}
+}
+
 </style>
 </head>
 
@@ -66,7 +189,7 @@ h1{font-size:80px;color:gold;margin-bottom:30px;}
 
 <script>
 
-/* LATAJĄCE $ */
+/* tło */
 for(let i=0;i<25;i++){
     let s=document.createElement("span");
     s.innerText="$";
@@ -75,6 +198,7 @@ for(let i=0;i<25;i++){
     document.querySelector(".money-bg").appendChild(s);
 }
 
+/* dane */
 let current=0;
 
 const money=[
@@ -83,7 +207,6 @@ const money=[
 "100000 zł","500000 zł","1000000 zł"
 ];
 
-/* ✅ TWOJE PYTANIA */
 const questions=[
 {
 q:"Metoda Sarrusa służy do:",
@@ -124,70 +247,10 @@ answers:[
 "brak równań"
 ],
 correct:2
-},
-{
-q:"Metoda Gaussa–Jordana prowadzi macierz do postaci:",
-answers:[
-"schodkowej zredukowanej",
-"zerowej",
-"diagonalnej",
-"symetrycznej"
-],
-correct:0
-},
-{
-q:"W metodzie Gaussa–Jordana zerujemy elementy:",
-answers:[
-"tylko pod elementem głównym",
-"tylko nad elementem głównym",
-"nad i pod elementem głównym",
-"tylko w pierwszym wierszu"
-],
-correct:2
-},
-{
-q:"Które zdanie jest prawdziwe dla macierzy diagonalnej?",
-answers:[
-"Wszystkie elementy poza główną przekątną są równe jeden.",
-"Wszystkie elementy poza główną przekątną są równe zero.",
-"Wszystkie elementy na głównej przekątnej są równe zero.",
-"Symetryczna względem głównej przekątnej."
-],
-correct:1
-},
-{
-q:"Odwrotność macierzy A istnieje, jeśli:",
-answers:[
-"jest macierzą zerową",
-"det(A) = 0",
-"jest macierzą jednostkową",
-"det(A) ≠ 0"
-],
-correct:3
-},
-{
-q:"Mnożenie macierzy A przez B jest możliwe, gdy:",
-answers:[
-"liczba wierszy A = liczba kolumn B",
-"liczba kolumn A = liczba kolumn B",
-"liczba wierszy A = liczba wierszy B",
-"liczba kolumn A = liczba wierszy B"
-],
-correct:3
-},
-{
-q:"Po zakończeniu metody Gaussa–Jordana po lewej stronie macierzy rozszerzonej otrzymujemy najczęściej:",
-answers:[
-"macierz zerową",
-"macierz jednostkową",
-"macierz diagonalną",
-"macierz transponowaną"
-],
-correct:1
 }
 ];
 
-/* shuffle */
+/* mieszanie */
 function shuffle(q){
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
     arr.sort(()=>Math.random()-0.5);
@@ -199,23 +262,69 @@ questions.forEach(q=>shuffle(q));
 function load(){
     let q=questions[current];
     document.getElementById("question").innerText=q.q;
+
     ["a","b","c","d"].forEach((id,i)=>{
         document.getElementById(id).innerText=q.shuffled[i].text;
     });
+
     document.getElementById("money").innerText="Wygrana: "+money[current];
 }
 
+/* ✅ POPRAWNE KOLORY */
 function answer(i){
     let q=questions[current];
     let correct=q.newCorrect;
+    let ids=["a","b","c","d"];
+
+    ids.forEach(id=>document.getElementById(id).onclick=null);
+
+    document.getElementById(ids[correct]).classList.add("correct");
+
+    if(i!==correct){
+        document.getElementById(ids[i]).classList.add("wrong");
+    }
 
     setTimeout(()=>{
         if(i===correct){
             current++;
-            if(current<questions.length){load();}
-            else{winGame();}
-        } else{gameOver();}
-    },500);
+            if(current<questions.length){
+                reset();
+                load();
+            } else{
+                winGame();
+            }
+        } else{
+            gameOver();
+        }
+    },1500);
+}
+
+function reset(){
+    ["a","b","c","d"].forEach((id,i)=>{
+        let el=document.getElementById(id);
+        el.className="card";
+        el.onclick=()=>answer(i);
+        el.style.visibility="visible";
+    });
+}
+
+/* 50/50 */
+function use5050(){
+    let q=questions[current];
+    let correct=q.newCorrect;
+    let arr=[0,1,2,3].filter(i=>i!==correct);
+
+    for(let i=0;i<2;i++){
+        let r=Math.floor(Math.random()*arr.length);
+        document.getElementById(["a","b","c","d"][arr[r]]).style.visibility="hidden";
+        arr.splice(r,1);
+    }
+}
+
+/* telefon */
+function friend(){
+    let q=questions[current];
+    alert("📞 "+["A","B","C","D"][q.newCorrect]);
 }
 
 /* przegrana */
@@ -223,15 +332,55 @@ function gameOver(){
     document.body.innerHTML=`<div class="end-screen sad">😢 KONIEC GRY 😢</div>`;
 }
 
-/* wygrana */
+/* ✅ WYGRANA + FAJERWERKI */
 function winGame(){
     document.body.innerHTML=`
     <div class="end-screen">
         🎉 MILION ZDOBYTY! 🎉
         <div class="chest">
-            <div class="gold">🪙🪙🪙🪙</div>
+            <div class="gold">🪙🪙🪙💰</div>
         </div>
     </div>`;
+
+    setInterval(()=>{
+        let x=Math.random()*innerWidth;
+        let y=Math.random()*innerHeight/2;
+
+        for(let i=0;i<20;i++){
+            let p=document.createElement("div");
+
+            p.style.position="absolute";
+            p.style.width="6px";
+            p.style.height="6px";
+            p.style.borderRadius="50%";
+            p.style.background=`hsl(${Math.random()*360},100%,50%)`;
+
+            p.style.left=x+"px";
+            p.style.top=y+"px";
+
+            document.body.appendChild(p);
+
+            let a=Math.random()*2*Math.PI;
+            let s=Math.random()*5+2;
+
+            let dx=Math.cos(a)*s;
+            let dy=Math.sin(a)*s;
+
+            let life=0;
+
+            let anim=setInterval(()=>{
+                life++;
+                p.style.left=(p.offsetLeft+dx)+"px";
+                p.style.top=(p.offsetTop+dy)+"px";
+                p.style.opacity=1-life/30;
+
+                if(life>30){
+                    clearInterval(anim);
+                    p.remove();
+                }
+            },30);
+        }
+    },400);
 }
 
 load();
