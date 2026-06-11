@@ -92,16 +92,22 @@ button:hover{
 
 <h1>🎡 Koło Fortuny – Gauss-Jordan</h1>
 
+<div class="gameArea">
+
+<button class="spin" onclick="spin()">
+🎲 Losuj pytanie
+</button>
+
+<div class="wheelArea">
 <div class="arrow"></div>
-
-<!-- mniejsze koło -->
 <canvas id="wheel" width="350" height="350"></canvas>
+</div>
 
-<br>
+<button class="answerBtn" onclick="showAnswer()">
+📖 Pokaż odpowiedź
+</button>
 
-<button class="spin" onclick="spin()">🎲 Losuj pytanie</button>
-<br>
-<button class="answerBtn" onclick="showAnswer()">📖 Pokaż odpowiedź</button>
+</div>
 
 <div id="question">
 Kliknij „Losuj pytanie”
@@ -163,8 +169,8 @@ ctx.arc(
 radius,
 radius,
 radius,
-i*step,
-(i+1)*step
+i*step - Math.PI/2,
+(i+1)*step - Math.PI/2
 );
 
 ctx.fill();
@@ -172,7 +178,7 @@ ctx.fill();
 ctx.save();
 
 ctx.translate(radius,radius);
-ctx.rotate(i*step + step/2);
+ctx.rotate(i*step + step/2 - Math.PI/2);
 
 ctx.fillStyle="#333";
 ctx.font="bold 14px Arial";
@@ -195,12 +201,14 @@ function spin(){
 currentIndex =
 Math.floor(Math.random()*tasks.length);
 
-const sectors = tasks.length;
-const sliceAngle = 360/sectors;
+const slice = 360/tasks.length;
+
+/* środek sektora */
+const target =
+360 - (currentIndex*slice + slice/2);
 
 const rotation =
-360*6 +
-(360 - currentIndex*sliceAngle - sliceAngle/2);
+2160 + target;
 
 canvas.style.transform =
 `rotate(${rotation}deg)`;
@@ -210,11 +218,11 @@ document.getElementById("question").innerHTML =
 
 document.getElementById("answer").innerHTML = "";
 
-setTimeout(() => {
+setTimeout(()=>{
 
 document.getElementById("question").innerHTML =
-"<h2>Pytanie nr " +
-tasks[currentIndex].nr +
+"<h2>Pytanie nr "
++ tasks[currentIndex].nr +
 "</h2>" +
 tasks[currentIndex].q;
 
