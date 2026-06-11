@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎡 Koło Fortuny – Gauss-Jordan</title>
+<title>🎡 Koło Fortuny – Gauss Jordan</title>
 
 <style>
 body{
@@ -12,12 +12,11 @@ body{
     font-family:Arial,sans-serif;
     background:linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
     text-align:center;
-    overflow:hidden;
 }
 
 h1{
-    margin-top:20px;
     color:#444;
+    margin-top:20px;
 }
 
 .arrow{
@@ -26,75 +25,54 @@ h1{
     margin:10px auto;
     border-left:20px solid transparent;
     border-right:20px solid transparent;
-    border-top:30px solid #ff4d6d;
+    border-top:35px solid red;
 }
 
 #wheel{
     border-radius:50%;
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
-    transition:transform 5s cubic-bezier(.1,.8,.2,1);
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    transition:transform 5s cubic-bezier(.17,.67,.16,.99);
 }
 
 button{
     margin-top:15px;
     padding:15px 35px;
-    font-size:20px;
-    font-weight:bold;
     border:none;
     border-radius:30px;
     cursor:pointer;
-    transition:.3s;
-}
-
-button:hover{
-    transform:scale(1.08);
+    font-size:20px;
+    font-weight:bold;
 }
 
 .spin{
+    background:#4facfe;
     color:white;
-    background:linear-gradient(135deg,#36d1dc,#5b86e5);
 }
 
 .answerBtn{
-    background:linear-gradient(135deg,#ffd200,#f7971e);
-    color:#333;
+    background:#ffd54f;
 }
 
 #question{
     margin-top:25px;
-    font-size:22px;
+    font-size:24px;
     font-weight:bold;
-    color:#333;
 }
 
 #answer{
-    margin-top:20px;
+    margin-top:15px;
     font-size:20px;
-    color:#006400;
-    font-weight:bold;
-}
-
-.chicken{
-    position:absolute;
-    font-size:22px;
-    animation:float 4s linear infinite;
-}
-
-@keyframes float{
-    0%{transform:translateY(0);}
-    50%{transform:translateY(-10px);}
-    100%{transform:translateY(0);}
+    color:green;
 }
 </style>
 </head>
-
 <body>
 
-<h1>🎡 Koło Fortuny – Gauss-Jordan</h1>
+<h1>🎡 Koło Fortuny – Gauss Jordan</h1>
 
 <div class="arrow"></div>
 
-<canvas id="wheel" width="450" height="450"></canvas>
+<canvas id="wheel" width="500" height="500"></canvas>
 
 <br>
 
@@ -113,52 +91,26 @@ Kliknij „Losuj pytanie”
 const tasks = [
 
 {nr:1,q:"Co oznacza r(A)?",a:"Rząd macierzy głównej A."},
-
 {nr:2,q:"Co oznacza r(A|b)?",a:"Rząd macierzy rozszerzonej układu."},
-
 {nr:3,q:"Co to jest macierz rozszerzona?",a:"Macierz główna z dołączoną kolumną wyrazów wolnych."},
-
 {nr:4,q:"Na czym polega metoda Gaussa-Jordana?",a:"Na sprowadzeniu macierzy rozszerzonej do normalnej postaci schodkowej."},
-
 {nr:5,q:"Po co stosujemy metodę Gaussa-Jordana?",a:"Aby rozwiązać układ równań liniowych."},
-
 {nr:6,q:"Jakie operacje elementarne można wykonywać na wierszach?",a:"Zamiana wierszy, mnożenie wiersza przez liczbę różną od zera, dodanie wielokrotności jednego wiersza do drugiego."},
-
 {nr:7,q:"Kiedy układ ma rozwiązanie?",a:"Gdy r(A)=r(A|b)."},
-
 {nr:8,q:"Kiedy układ nie ma rozwiązania?",a:"Gdy r(A)≠r(A|b)."},
-
 {nr:9,q:"Kiedy układ ma dokładnie jedno rozwiązanie?",a:"Gdy r(A)=r(A|b)=n."},
-
 {nr:10,q:"Kiedy układ ma nieskończenie wiele rozwiązań?",a:"Gdy r(A)=r(A|b)<n."},
-
 {nr:11,q:"Każdy układ jednorodny ma rozwiązanie — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
-
 {nr:12,q:"Układ sprzeczny ma rozwiązanie — PRAWDA czy FAŁSZ?",a:"FAŁSZ."},
-
 {nr:13,q:"Można pomnożyć wiersz macierzy przez 0 — PRAWDA czy FAŁSZ?",a:"FAŁSZ."},
-
 {nr:14,q:"Zamiana miejscami dwóch wierszy jest operacją elementarną — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
-
 {nr:15,q:"Macierz rozszerzona zawiera kolumnę wyrazów wolnych — PRAWDA czy FAŁSZ?",a:"PRAWDA."},
-
 {nr:16,q:"Jeśli r(A)=2, r(A|b)=2 i n=2, ile rozwiązań ma układ?",a:"Jedno rozwiązanie, bo r(A)=r(A|b)=n."},
-
 {nr:17,q:"Jeśli r(A)=2, r(A|b)=2 i n=4, ile rozwiązań ma układ?",a:"Nieskończenie wiele, bo r(A)=r(A|b)<n."},
-
 {nr:18,q:"Jeśli r(A)=2, r(A|b)=3, czy układ ma rozwiązanie?",a:"Nie, bo r(A)≠r(A|b)."},
-
 {nr:19,q:"Ile parametrów ma rozwiązanie, jeśli n=5 i r=3?",a:"2 parametry, bo n-r=2."},
-
 {nr:20,q:"Co oznacza n w twierdzeniu Kroneckera-Capellego?",a:"Liczbę niewiadomych."}
 
-];
-
-const colors = [
-"#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff",
-"#a0c4ff","#bdb2ff","#ffc6ff","#ffadad","#ffd6a5",
-"#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff",
-"#ffc6ff","#ffadad","#ffd6a5","#fdffb6","#caffbf"
 ];
 
 const canvas = document.getElementById("wheel");
@@ -166,8 +118,13 @@ const ctx = canvas.getContext("2d");
 
 const radius = canvas.width/2;
 
-let currentRotation = 0;
+const colors = [
+"#ffadad","#ffd6a5","#fdffb6","#caffbf",
+"#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff"
+];
+
 let currentIndex = null;
+let currentRotation = 0;
 
 function drawWheel(){
 
@@ -178,7 +135,7 @@ for(let i=0;i<tasks.length;i++){
 ctx.beginPath();
 ctx.moveTo(radius,radius);
 
-ctx.fillStyle = colors[i];
+ctx.fillStyle = colors[i % colors.length];
 
 ctx.arc(
 radius,
@@ -195,11 +152,15 @@ ctx.save();
 ctx.translate(radius,radius);
 ctx.rotate(i*step + step/2);
 
-ctx.textAlign="right";
 ctx.fillStyle="#333";
 ctx.font="bold 18px Arial";
+ctx.textAlign="right";
 
-ctx.fillText(tasks[i].nr,radius-15,5);
+ctx.fillText(
+tasks[i].nr,
+radius-20,
+5
+);
 
 ctx.restore();
 }
@@ -212,13 +173,15 @@ function spin(){
 currentIndex =
 Math.floor(Math.random()*tasks.length);
 
-const sliceAngle = 360/tasks.length;
+const sliceAngle =
+360/tasks.length;
 
-const targetAngle =
-360 - (currentIndex*sliceAngle + sliceAngle/2);
+const stopAngle =
+360 -
+(currentIndex*sliceAngle + sliceAngle/2);
 
 currentRotation +=
-360*6 + targetAngle;
+360*5 + stopAngle;
 
 canvas.style.transform =
 `rotate(${currentRotation}deg)`;
@@ -228,44 +191,27 @@ document.getElementById("question").innerHTML =
 
 document.getElementById("answer").innerHTML = "";
 
-setTimeout(()=>{
+setTimeout(() => {
 
 document.getElementById("question").innerHTML =
-"<h2>Pytanie " +
+"<h2>Pytanie nr " +
 tasks[currentIndex].nr +
 "</h2>" +
 tasks[currentIndex].q;
 
 },5000);
+
 }
 
 function showAnswer(){
 
-if(currentIndex===null) return;
+if(currentIndex === null){
+return;
+}
 
 document.getElementById("answer").innerHTML =
-"✅ " + tasks[currentIndex].a;
-}
-
-function createChick(){
-
-const chick =
-document.createElement("div");
-
-chick.className = "chicken";
-chick.innerText = "🐥";
-
-chick.style.left =
-Math.random()*window.innerWidth + "px";
-
-chick.style.top =
-Math.random()*window.innerHeight + "px";
-
-document.body.appendChild(chick);
-}
-
-for(let i=0;i<15;i++){
-createChick();
+"✅ " +
+tasks[currentIndex].a;
 }
 
 </script>
