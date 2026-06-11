@@ -28,7 +28,6 @@ body{
     100%{transform:translateY(100vh);}
 }
 
-/* GŁÓWNY EKRAN */
 .main{
     height:100vh;
     display:flex;
@@ -37,14 +36,12 @@ body{
     align-items:center;
 }
 
-/* TYTUŁ */
 h1{
     font-size:80px;
     color:gold;
     margin-bottom:30px;
 }
 
-/* PYTANIE */
 .question{
     font-size:35px;
     margin-bottom:40px;
@@ -52,7 +49,6 @@ h1{
     text-align:center;
 }
 
-/* ODPOWIEDZI */
 .answers{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -89,7 +85,6 @@ h1{
     color:gold;
 }
 
-/* KOŁA */
 .lifelines button{
     padding:15px 30px;
     font-size:18px;
@@ -111,6 +106,7 @@ h1{
     justify-content:center;
     align-items:center;
     font-size:60px;
+    text-align:center;
 }
 
 /* SMUTNE MINKI */
@@ -124,23 +120,45 @@ h1{
     100%{transform:translateY(100vh);}
 }
 
-/* FAJERWERKI */
-.firework{
-    position:absolute;
-    width:10px;
-    height:10px;
-    background:yellow;
-    border-radius:50%;
-    animation:explode 1s forwards;
+/* === NOWA SKRZYNIA ZE ZŁOTEM === */
+.chest{
+    width:160px;
+    height:110px;
+    background:linear-gradient(#7a4b00,#c98a00);
+    border-radius:15px;
+    position:relative;
+    margin-top:30px;
+    box-shadow:0 0 25px gold;
 }
-@keyframes explode{
-    0%{transform:scale(1);}
-    100%{transform:scale(6);opacity:0;}
+.chest::before{
+    content:"";
+    position:absolute;
+    top:-50px;
+    left:0;
+    width:160px;
+    height:70px;
+    background:linear-gradient(#c98a00,#7a4b00);
+    border-radius:15px 15px 0 0;
+}
+.gold{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:40px;
+    animation:goldShine 1s infinite alternate;
+}
+@keyframes goldShine{
+    from{transform:translateX(-50%) scale(1);}
+    to{transform:translateX(-50%) scale(1.2);}
 }
 
-.chest{
-    font-size:100px;
-    margin-top:20px;
+/* === LEPSZE FAJERWERKI === */
+.particle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    border-radius:50%;
 }
 
 </style>
@@ -151,7 +169,6 @@ h1{
 <div class="money-bg"></div>
 
 <div class="main">
-
 <h1>💰 MILIONERZY 💰</h1>
 
 <div class="lifelines">
@@ -169,7 +186,6 @@ h1{
 </div>
 
 <div class="money" id="money"></div>
-
 </div>
 
 <script>
@@ -191,7 +207,8 @@ const money=[
 "100000 zł","500000 zł","1000000 zł"
 ];
 
-const questions=[ /* TWOJE (nie zmienione!) */
+/* TWOJE PYTANIA – NIE ZMIENIONE */
+const questions=[
 {
 q:"Metoda Sarrusa służy do:",
 answers:["Gaussa","transpozycji","mnożenia","wyznacznika 3x3"],
@@ -294,7 +311,6 @@ correct:1
 }
 ];
 
-/* shuffle */
 function shuffle(q){
     let arr=q.answers.map((a,i)=>({text:a,id:i}));
     arr.sort(()=>Math.random()-0.5);
@@ -385,27 +401,58 @@ function gameOver(){
     }
 }
 
-/* WYGRANA */
+/* WYGRANA – LEPSZA */
 function winGame(){
     document.body.innerHTML=`
     <div class="end-screen">
         🎉 MILION ZDOBYTY! 🎉
-        <div class="chest">💰</div>
+        <div class="chest">
+            <div class="gold">🪙🪙🪙</div>
+        </div>
     </div>`;
 
-    setInterval(()=>{
-        let f=document.createElement("div");
-        f.classList.add("firework");
-        f.style.left=Math.random()*100+"%";
-        f.style.top=Math.random()*100+"%";
-        document.body.appendChild(f);
-        setTimeout(()=>f.remove(),1000);
-    },150);
+    setInterval(createFirework, 500);
+}
+
+function createFirework(){
+    let x = Math.random()*window.innerWidth;
+    let y = Math.random()*window.innerHeight/2;
+
+    for(let i=0;i<25;i++){
+        let p=document.createElement("div");
+        p.className="particle";
+
+        let angle=Math.random()*2*Math.PI;
+        let speed=Math.random()*5+2;
+
+        let dx=Math.cos(angle)*speed;
+        let dy=Math.sin(angle)*speed;
+
+        p.style.left=x+"px";
+        p.style.top=y+"px";
+        p.style.background=`hsl(${Math.random()*360},100%,50%)`;
+
+        document.body.appendChild(p);
+
+        let life=0;
+
+        let interval=setInterval(()=>{
+            life++;
+            p.style.left=(p.offsetLeft+dx)+"px";
+            p.style.top=(p.offsetTop+dy)+"px";
+            p.style.opacity=1-life/30;
+
+            if(life>30){
+                clearInterval(interval);
+                p.remove();
+            }
+        },30);
+    }
 }
 
 load();
 
 </script>
-
 </body>
 </html>
+
