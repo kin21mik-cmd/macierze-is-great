@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎡 Koło Fortuny – Gauss Jordan</title>
+<title>🎡 Koło Fortuny – Gauss-Jordan</title>
 
 <style>
 body{
@@ -12,11 +12,12 @@ body{
     font-family:Arial,sans-serif;
     background:linear-gradient(135deg,#ffe0f0,#e0f7fa,#fff3cd);
     text-align:center;
+    overflow:hidden;
 }
 
 h1{
     color:#444;
-    margin-top:20px;
+    margin-top:15px;
 }
 
 .arrow{
@@ -25,12 +26,12 @@ h1{
     margin:10px auto;
     border-left:20px solid transparent;
     border-right:20px solid transparent;
-    border-top:35px solid red;
+    border-top:35px solid #ff4d6d;
 }
 
 #wheel{
     border-radius:50%;
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
     transition:transform 5s cubic-bezier(.17,.67,.16,.99);
 }
 
@@ -42,6 +43,11 @@ button{
     cursor:pointer;
     font-size:20px;
     font-weight:bold;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.08);
 }
 
 .spin{
@@ -54,25 +60,42 @@ button{
 }
 
 #question{
-    margin-top:25px;
-    font-size:24px;
+    margin-top:20px;
+    font-size:22px;
     font-weight:bold;
+    color:#333;
 }
 
 #answer{
     margin-top:15px;
     font-size:20px;
     color:green;
+    font-weight:bold;
+}
+
+.chicken{
+    position:absolute;
+    font-size:22px;
+    animation:float 4s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes float{
+    0%{transform:translateY(0)}
+    50%{transform:translateY(-10px)}
+    100%{transform:translateY(0)}
 }
 </style>
 </head>
+
 <body>
 
-<h1>🎡 Koło Fortuny – Gauss Jordan</h1>
+<h1>🎡 Koło Fortuny – Gauss-Jordan</h1>
 
 <div class="arrow"></div>
 
-<canvas id="wheel" width="500" height="500"></canvas>
+<!-- mniejsze koło -->
+<canvas id="wheel" width="350" height="350"></canvas>
 
 <br>
 
@@ -124,7 +147,6 @@ const colors = [
 ];
 
 let currentIndex = null;
-let currentRotation = 0;
 
 function drawWheel(){
 
@@ -153,12 +175,12 @@ ctx.translate(radius,radius);
 ctx.rotate(i*step + step/2);
 
 ctx.fillStyle="#333";
-ctx.font="bold 18px Arial";
+ctx.font="bold 14px Arial";
 ctx.textAlign="right";
 
 ctx.fillText(
 tasks[i].nr,
-radius-20,
+radius-15,
 5
 );
 
@@ -173,18 +195,15 @@ function spin(){
 currentIndex =
 Math.floor(Math.random()*tasks.length);
 
-const sliceAngle =
-360/tasks.length;
+const sectors = tasks.length;
+const sliceAngle = 360/sectors;
 
-const stopAngle =
-360 -
-(currentIndex*sliceAngle + sliceAngle/2);
-
-currentRotation +=
-360*5 + stopAngle;
+const rotation =
+360*6 +
+(360 - currentIndex*sliceAngle - sliceAngle/2);
 
 canvas.style.transform =
-`rotate(${currentRotation}deg)`;
+`rotate(${rotation}deg)`;
 
 document.getElementById("question").innerHTML =
 "🎡 Losowanie...";
@@ -200,24 +219,45 @@ tasks[currentIndex].nr +
 tasks[currentIndex].q;
 
 },5000);
-
 }
 
 function showAnswer(){
 
-if(currentIndex === null){
-return;
-}
+if(currentIndex===null) return;
 
 document.getElementById("answer").innerHTML =
-"✅ " +
-tasks[currentIndex].a;
+"✅ " + tasks[currentIndex].a;
+}
+
+/* KURCZAKI 🐥 */
+
+function createChick(){
+
+const chick =
+document.createElement("div");
+
+chick.className = "chicken";
+chick.innerHTML = "🐥";
+
+chick.style.left =
+Math.random()*window.innerWidth + "px";
+
+chick.style.top =
+Math.random()*window.innerHeight + "px";
+
+document.body.appendChild(chick);
+}
+
+for(let i=0;i<12;i++){
+createChick();
 }
 
 </script>
 
 </body>
 </html>
+
+
 
 
 
